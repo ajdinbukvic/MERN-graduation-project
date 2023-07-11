@@ -10,7 +10,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 
 const CustomError = require('./utils/customError');
-//const globalErrorHandler = require('./controllers/errorController');
+const globalErrorHandler = require('./controllers/errorController');
 
 //const authRouter = require('./routes/authRoutes');
 
@@ -69,6 +69,6 @@ app.all('*', (req, res, next) => {
   next(new CustomError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-//app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 module.exports = app;
