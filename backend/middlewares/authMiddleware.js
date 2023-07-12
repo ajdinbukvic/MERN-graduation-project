@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('./../models/userModel');
 const CustomError = require('./../utils/customError');
+const { createSendToken } = require('../utils/token');
 
 // exports.isLoggedIn = async (req, res, next) => {
 //   if (req.cookies.jwt) {
@@ -31,6 +32,51 @@ const CustomError = require('./../utils/customError');
 //   }
 //   next();
 // };
+
+exports.refresh = asyncHandler(async (req, res, next) => {
+  let token;
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
+  if (!token) {
+    return next(
+      new CustomError(
+        'You are not logged in! Please log in to get access.',
+        401,
+      ),
+    );
+  }
+
+  const decoded = await promisify(jwt.verify)(
+    token,
+    process.env.JWT_REFRESH_SECRET,
+  );
+
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new CustomError(
+        'The user belonging to this token does no longer exist.',
+        401,
+      ),
+    );
+  }
+
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new CustomError(
+        'User recently changed password! Please log in again.',
+        401,
+      ),
+    );
+  }
+
+  req.user = currentUser;
+  res.locals.user = currentUser;
+
+  createSendToken(currentUser, 200, res);
+});
 
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;

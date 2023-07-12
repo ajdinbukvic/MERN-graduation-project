@@ -1,8 +1,5 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const asyncHandler = require('express-async-handler');
-const { promisify } = require('util');
-const User = require('./../models/userModel');
 
 exports.generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
@@ -66,8 +63,6 @@ exports.decrypt = (text) => {
 
 exports.generateToken = () => {
   const token = crypto.randomBytes(32).toString('hex');
-
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
   return hashedToken;
 };

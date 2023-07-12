@@ -68,6 +68,9 @@ module.exports = class Email {
   }
 
   async sendOTP() {
-    await this.send('otpVerification', 'DiplomskiApp - 2FA verification code');
+    await this.send(
+      'otpVerification',
+      'DiplomskiApp - 2FA verification code (valid for 1min)',
+    );
   }
 };
