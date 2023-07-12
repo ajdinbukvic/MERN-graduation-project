@@ -39,7 +39,7 @@ module.exports = class Email {
     await this.newTransport().sendMail(mailOptions);
   }
 
-  async sendEmailVerification() {
+  async sendVerificationEmail() {
     await this.send(
       'emailVerification',
       'DiplomskiApp - Please verify your email (valid for 24h)',
@@ -51,5 +51,23 @@ module.exports = class Email {
       'passwordReset',
       'DiplomskiApp - Reset your password (valid for 10min)',
     );
+  }
+
+  async sendLoginWithNewDevice() {
+    await this.send(
+      'newDeviceLogin',
+      'DiplomskiApp - Access from new device detected on your account',
+    );
+  }
+
+  async sendPasswordChanged() {
+    await this.send(
+      'passwordChange',
+      'DiplomskiApp - Your password was successflully changed',
+    );
+  }
+
+  async sendOTP() {
+    await this.send('otpVerification', 'DiplomskiApp - 2FA verification code');
   }
 };

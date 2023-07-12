@@ -64,13 +64,10 @@ exports.decrypt = (text) => {
   return decipher.final('utf8');
 };
 
-exports.createResetToken = () => {
-  const resetToken = crypto.randomBytes(32).toString('hex');
+exports.generateToken = () => {
+  const token = crypto.randomBytes(32).toString('hex');
 
-  const hashedToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
   return hashedToken;
 };

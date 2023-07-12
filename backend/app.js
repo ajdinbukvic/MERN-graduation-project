@@ -12,7 +12,7 @@ const hpp = require('hpp');
 const CustomError = require('./utils/customError');
 const globalErrorHandler = require('./controllers/errorController');
 
-//const authRouter = require('./routes/authRoutes');
+const authRouter = require('./routes/authRoutes');
 
 const app = express();
 
@@ -62,7 +62,7 @@ app.use(cookieParser());
 
 // ROUTES
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-//app.use('/api/auth', authRouter);
+app.use('/api/auth', authRouter);
 
 // Error handling
 app.all('*', (req, res, next) => {

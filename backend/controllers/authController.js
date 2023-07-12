@@ -5,7 +5,8 @@ const asyncHandler = require('express-async-handler');
 const CustomError = require('./../utils/customError');
 const Email = require('./../utils/email');
 const { validationResult } = require('express-validator');
-const { createSendToken, createResetToken } = require('../utils/token');
+const { createSendToken, generateToken } = require('../utils/token');
+const { createEmailToken } = require('../middlewares/emailMiddleware');
 const {
   USER_INCORRECT_EMAIL_PASSWORD,
   USER_CURRENT_PASSWORD_WRONG,
@@ -34,11 +35,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     userAgent,
   });
 
-  createSendToken(newUser, 201, res);
-
-  // const url = `${req.protocol}://${req.get('host')}/me`;
-  // console.log(url);
-  // createEmailToken(newUser, url);
+  //createSendToken(newUser, 201, res);
+  createEmailToken(newUser, 201, res);
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
@@ -55,6 +53,16 @@ exports.login = asyncHandler(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new CustomError(USER_INCORRECT_EMAIL_PASSWORD, 401));
   }
+
+  if (!user.isVerified) {
+    return next(new AppError('Email is not verified.', 401));
+  }
+
+  const ua = parser(req.headers['user-agent']);
+  const loginUserAgent = ua.ua;
+  console.log(loginUserAgent);
+  const isNewUserAgent = user.userAgent.includes(loginUserAgent);
+  if (isNewUserAgent) await new Email(user).sendLoginWithNewDevice();
 
   createSendToken(user, 200, res);
 });
@@ -82,16 +90,15 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     await token.deleteOne();
   }
 
-  const resetToken = createResetToken();
+  const resetToken = generateToken();
 
   await new Token({
     userId: user._id,
-    resetToken: hashedToken,
+    resetToken,
     createdAt: Date.now(),
-    expiresAt: Date.now() + 10 * (60 * 1000),
+    expiresAt: Date.now() + 10 * 60 * 1000,
   }).save();
 
-  // 3) Send it to user's email
   try {
     const resetURL = `${req.protocol}://${req.get(
       'host',
@@ -117,7 +124,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     .digest('hex');
 
   const userToken = await Token.findOne({
-    token: hashedToken,
+    resetToken: hashedToken,
     expiresAt: { $gt: Date.now() },
   });
 
@@ -129,6 +136,8 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
+
+  await new Email(user).sendPasswordChanged();
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
@@ -155,6 +164,8 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
+
+  await new Email(user).sendPasswordChanged();
 
   createSendToken(user, 200, res);
 });

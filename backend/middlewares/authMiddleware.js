@@ -89,9 +89,3 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
-
-exports.isVerified = (req, res, next) => {
-  if (!req.user && !req.user.isVerified)
-    return next(new AppError('Email is not verified.', 401));
-  next();
-};

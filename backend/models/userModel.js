@@ -42,6 +42,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    twoFactorAuth: {
+      type: Boolean,
+      default: false,
+    },
     role: {
       type: String,
       enum: ['student', 'teacher', 'admin'],
