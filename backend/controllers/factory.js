@@ -1,4 +1,3 @@
-const CustomError = require('./../utils/customError');
 const asyncHandler = require('express-async-handler');
 
 exports.deleteOne = (Model) =>
