@@ -42,9 +42,25 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    twoFactorAuth: {
+    otpEnabled: {
       type: Boolean,
       default: false,
+    },
+    otpVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otpAscii: {
+      type: String,
+    },
+    otpHex: {
+      type: String,
+    },
+    otpBase32: {
+      type: String,
+    },
+    otpAuthUrl: {
+      type: String,
     },
     role: {
       type: String,

@@ -55,14 +55,14 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   if (!user.isVerified) {
-    return next(new AppError('Email is not verified.', 401));
+    return next(new CustomError('Email is not verified.', 401));
   }
 
   const ua = parser(req.headers['user-agent']);
   const loginUserAgent = ua.ua;
   console.log(loginUserAgent);
-  const isNewUserAgent = user.userAgent.includes(loginUserAgent);
-  if (isNewUserAgent) await new Email(user).sendLoginWithNewDevice();
+  const isAllowedUserAgent = user.userAgent.includes(loginUserAgent);
+  if (!isAllowedUserAgent) await new Email(user).sendLoginWithNewDevice();
 
   createSendToken(user, 200, res);
 });
