@@ -3,6 +3,10 @@ const authController = require('./../controllers/authController');
 const { verifyEmail } = require('./../middlewares/emailMiddleware');
 const { refresh, protect } = require('./../middlewares/authMiddleware');
 const {
+  googleLogin,
+  facebookLogin,
+} = require('./../middlewares/socialAuthMiddleware');
+const {
   generateOTP,
   verifyOTP,
   validateOTP,
@@ -17,6 +21,9 @@ router.patch('/verifyEmail/:token', verifyEmail);
 
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
+
+router.post('/googleLogin', googleLogin);
+router.post('/facebookLogin', facebookLogin);
 
 // Protect all routes after this middleware
 router.use(protect);

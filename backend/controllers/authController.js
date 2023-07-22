@@ -4,6 +4,7 @@ const Token = require('./../models/tokenModel');
 const asyncHandler = require('express-async-handler');
 const CustomError = require('./../utils/customError');
 const Email = require('./../utils/email');
+const parser = require('ua-parser-js');
 const { validationResult } = require('express-validator');
 const { createSendToken, generateToken } = require('../utils/token');
 const { createEmailToken } = require('../middlewares/emailMiddleware');
@@ -59,9 +60,8 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   const ua = parser(req.headers['user-agent']);
-  const loginUserAgent = ua.ua;
-  console.log(loginUserAgent);
-  const isAllowedUserAgent = user.userAgent.includes(loginUserAgent);
+  const userAgent = [ua.ua];
+  const isAllowedUserAgent = user.userAgent.includes(userAgent);
   if (!isAllowedUserAgent) await new Email(user).sendLoginWithNewDevice();
 
   createSendToken(user, 200, res);

@@ -34,7 +34,7 @@ exports.createEmailToken = async (user, statusCode, res) => {
     });
   } catch (err) {
     return next(
-      new AppError('There was an error sending the email. Try again later!'),
+      new CustomError('There was an error sending the email. Try again later!'),
       500,
     );
   }

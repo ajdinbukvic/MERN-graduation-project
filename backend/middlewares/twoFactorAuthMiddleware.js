@@ -1,20 +1,11 @@
-const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler');
 const User = require('./../models/userModel');
 const crypto = require('crypto');
 const CustomError = require('./../utils/customError');
 const OTPAuth = require('otpauth');
 const { encode } = require('hi-base32');
-const { createSendToken } = require('../utils/token');
-
-//generate & send
-//verify
-//enable
-//disable
 
 //email templates
-//new device login - otpToken
-//googleAuthenticator 2FA
 //oauth2 google login
 
 const generateRandomBase32 = () => {
