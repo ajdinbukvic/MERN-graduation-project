@@ -2,7 +2,7 @@ extends baseEmail
 
 block content
   p Pozdrav, #{firstName}
-  p Zaboravili ste lozinku?
+  p Detektovana je prijava s novog uređaja na vaš korisnički profil.
   table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
     tbody
       tr
@@ -11,4 +11,4 @@ block content
             tbody
               tr
                 td
-                  a(href=`${url}`, target='_blank') Resetuj lozinku
+                  p Podaci o uređaju: #{url}

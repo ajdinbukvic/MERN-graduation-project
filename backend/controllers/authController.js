@@ -62,7 +62,8 @@ exports.login = asyncHandler(async (req, res, next) => {
   const ua = parser(req.headers['user-agent']);
   const userAgent = [ua.ua];
   const isAllowedUserAgent = user.userAgent.includes(userAgent);
-  if (!isAllowedUserAgent) await new Email(user).sendLoginWithNewDevice();
+  if (!isAllowedUserAgent)
+    await new Email(user, userAgent).sendLoginWithNewDevice();
 
   createSendToken(user, 200, res);
 });

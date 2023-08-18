@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('./../models/userModel');
+const Token = require('./../models/tokenModel');
 const CustomError = require('./../utils/customError');
 const Email = require('./../utils/email');
 const { generateToken } = require('../utils/token');
