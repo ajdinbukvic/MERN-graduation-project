@@ -12,6 +12,7 @@ const {
   USER_INCORRECT_EMAIL_PASSWORD,
   USER_CURRENT_PASSWORD_WRONG,
   USER_PASSWORDS_NOT_MATCHING,
+  USER_ALREADY_EXISTS,
 } = require('../constants/userConstants');
 
 exports.register = asyncHandler(async (req, res, next) => {
@@ -25,6 +26,13 @@ exports.register = asyncHandler(async (req, res, next) => {
     return next(new CustomError(USER_PASSWORDS_NOT_MATCHING, 401));
   }
 
+  const { email } = req.body;
+  const userExists = await User.findOne({ email });
+
+  if (userExists) {
+    return next(new CustomError(USER_ALREADY_EXISTS(email), 401));
+  }
+
   const ua = parser(req.headers['user-agent']);
   const userAgent = [ua.ua];
 
@@ -36,8 +44,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     userAgent,
   });
 
-  //createSendToken(newUser, 201, res);
-  createEmailToken(newUser, 201, res);
+  createEmailToken(newUser, 201, req, res, next);
 });
 
 exports.login = asyncHandler(async (req, res, next) => {
@@ -60,16 +67,20 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   const ua = parser(req.headers['user-agent']);
-  const userAgent = [ua.ua];
+  const userAgent = ua.ua;
   const isAllowedUserAgent = user.userAgent.includes(userAgent);
-  if (!isAllowedUserAgent)
+  console.log(isAllowedUserAgent);
+  if (!isAllowedUserAgent) {
     await new Email(user, userAgent).sendLoginWithNewDevice();
+    user.userAgent.push(userAgent);
+    await user.save({ validateBeforeSave: false });
+  }
 
   createSendToken(user, 200, res);
 });
 
 exports.logout = (req, res) => {
-  res.cookie('jwt', 'loggedout', {
+  res.cookie('jwt', '', {
     path: '/',
     sameSite: 'none',
     secure: true,

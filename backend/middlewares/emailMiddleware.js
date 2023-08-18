@@ -4,51 +4,48 @@ const Token = require('./../models/tokenModel');
 const CustomError = require('./../utils/customError');
 const Email = require('./../utils/email');
 const { generateToken } = require('../utils/token');
+const crypto = require('crypto');
 
-exports.createEmailToken = async (user, statusCode, res) => {
-  const token = await Token.findOne({ userId: user._id });
-  if (token) {
-    await token.deleteOne();
-  }
+exports.createEmailToken = asyncHandler(
+  async (user, statusCode, req, res, next) => {
+    const token = await Token.findOne({ userId: user._id });
+    if (token) {
+      await token.deleteOne();
+    }
 
-  const verificationToken = generateToken();
+    const verificationToken = generateToken();
 
-  await new Token({
-    userId: user._id,
-    verificationToken,
-    createdAt: Date.now(),
-    expiresAt: Date.now() + 24 * 60 * 60 * 1000,
-  }).save();
+    await new Token({
+      userId: user._id,
+      verificationToken,
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+    }).save();
 
-  try {
-    const verificationURL = `${req.protocol}://${req.get(
-      'host',
-    )}/api/auth/verifyEmail/${verificationToken}`;
+    const verificationURL = `${process.env.FRONTEND_URL}verifyEmail/${verificationToken}`;
     await new Email(user, verificationURL).sendVerificationEmail();
+
+    // Remove password from output
+    user.password = undefined;
 
     res.status(statusCode).json({
       status: 'success',
-      // url: verificationURL,
+      //url: verificationURL,
       data: {
         user,
       },
     });
-  } catch (err) {
-    return next(
-      new CustomError('There was an error sending the email. Try again later!'),
-      500,
-    );
-  }
-};
+  },
+);
 
-exports.verifyEmail = asyncHandler(async (req, res) => {
-  const hashedToken = crypto
-    .createHash('sha256')
-    .update(req.params.token)
-    .digest('hex');
+exports.verifyEmail = asyncHandler(async (req, res, next) => {
+  // const hashedToken = crypto
+  //   .createHash('sha256')
+  //   .update(req.params.token)
+  //   .digest('hex');
 
   const userToken = await Token.findOne({
-    verificationToken: hashedToken,
+    verificationToken: req.params.token,
     expiresAt: { $gt: Date.now() },
   });
 
@@ -56,9 +53,18 @@ exports.verifyEmail = asyncHandler(async (req, res) => {
     return next(new CustomError('Token is invalid or has expired', 400));
   }
 
-  const user = await User.findOne({ _id: userToken.userId });
-  user.isVerified = true;
-  await user.save();
+  const updatedUser = await User.findByIdAndUpdate(
+    userToken.userId,
+    { isVerified: true },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  // const user = await User.findOne({ _id: userToken.userId });
+  // user.isVerified = true;
+  // await user.save();
 
   res.status(200).json({
     status: 'success',

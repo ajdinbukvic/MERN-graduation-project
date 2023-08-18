@@ -1,7 +1,11 @@
 const express = require('express');
 const authController = require('./../controllers/authController');
 const { verifyEmail } = require('./../middlewares/emailMiddleware');
-const { refresh, protect } = require('./../middlewares/authMiddleware');
+const {
+  refresh,
+  protect,
+  isLoggedIn,
+} = require('./../middlewares/authMiddleware');
 const {
   googleLogin,
   facebookLogin,
@@ -17,6 +21,7 @@ const router = express.Router();
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.get('/loginStatus', isLoggedIn);
 router.patch('/verifyEmail/:token', verifyEmail);
 
 router.post('/forgotPassword', authController.forgotPassword);

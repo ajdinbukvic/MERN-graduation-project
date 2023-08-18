@@ -1,19 +1,19 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
-exports.generateAccessToken = (id) => {
+const generateAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
     expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
   });
 };
 
-exports.generateRefreshToken = (id) => {
+const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
     expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
   });
 };
 
-exports.hashToken = (token) => {
+const hashToken = (token) => {
   return crypto.createHash('sha256').update(token.toString()).digest('hex');
 };
 

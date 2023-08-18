@@ -1,37 +1,22 @@
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 const asyncHandler = require('express-async-handler');
 const User = require('./../models/userModel');
 const CustomError = require('./../utils/customError');
 const { createSendToken } = require('../utils/token');
 
-// exports.isLoggedIn = async (req, res, next) => {
-//   if (req.cookies.jwt) {
-//     try {
-//       const decoded = await promisify(jwt.verify)(
-//         req.cookies.jwt,
-//         process.env.JWT_SECRET,
-//       );
-
-//       // 2) Check if user still exists
-//       const currentUser = await User.findById(decoded.id);
-//       if (!currentUser) {
-//         return next();
-//       }
-
-//       // 3) Check if user changed password after the token was issued
-//       if (currentUser.changedPasswordAfter(decoded.iat)) {
-//         return next();
-//       }
-
-//       // THERE IS A LOGGED IN USER
-//       res.locals.user = currentUser;
-//       return next();
-//     } catch (err) {
-//       return next();
-//     }
-//   }
-//   next();
-// };
+exports.isLoggedIn = asyncHandler(async (req, res) => {
+  const token = req.cookies.jwt;
+  if (!token) {
+    return res.json(false);
+  }
+  // Verify Token
+  const verified = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+  if (verified) {
+    return res.json(true);
+  }
+  return res.json(false);
+});
 
 exports.refresh = asyncHandler(async (req, res, next) => {
   let token;
@@ -103,7 +88,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
     return next(
-      new AppError(
+      new CustomError(
         'The user belonging to this token does no longer exist.',
         401,
       ),
