@@ -11,10 +11,10 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Login With Google
 exports.googleLogin = asyncHandler(async (req, res, next) => {
-  const { token } = req.body;
+  const { userToken } = req.body;
 
   const verify = await client.verifyIdToken({
-    idToken: token,
+    idToken: userToken,
     audience: process.env.GOOGLE_CLIENT_ID,
   });
 
@@ -33,11 +33,15 @@ exports.googleLogin = asyncHandler(async (req, res, next) => {
 
   if (user) {
     if (!(await user.correctPassword(password, user.password))) {
-      return next(new CustomError(USER_INCORRECT_EMAIL_PASSWORD, 401));
+      return next(new CustomError(USER_ALREADY_EXISTS(email), 401));
     }
 
     const isAllowedUserAgent = user.userAgent.includes(userAgent);
-    if (!isAllowedUserAgent) await new Email(user).sendLoginWithNewDevice();
+    if (!isAllowedUserAgent) {
+      await new Email(user, userAgent).sendLoginWithNewDevice();
+      user.userAgent.push(userAgent);
+      await user.save({ validateBeforeSave: false });
+    }
 
     createSendToken(user, 200, res);
   } else {

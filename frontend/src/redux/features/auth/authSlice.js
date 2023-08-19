@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import authService from "./authService";
-import axios from "axios";
+//import axios from "axios";
 
 const initialState = {
   isLoggedIn: false,
@@ -312,11 +312,11 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isLoggedIn = true;
-        state.user = action.payload;
+        state.user = action.payload.data.user;
         localStorage.setItem("token", action.payload.accessToken);
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${localStorage.getItem("token")}`;
+        // axios.defaults.headers.common[
+        //   "Authorization"
+        // ] = `Bearer ${localStorage.getItem("token")}`;
         toast.success("Uspješno ste se prijavili.");
       })
       .addCase(login.rejected, (state, action) => {
@@ -509,7 +509,11 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.isLoggedIn = true;
-        state.user = action.payload;
+        state.user = action.payload.data.user;
+        localStorage.setItem("token", action.payload.accessToken);
+        // axios.defaults.headers.common[
+        //   "Authorization"
+        // ] = `Bearer ${localStorage.getItem("token")}`;
         toast.success("Uspješno ste se prijavili.");
       })
       .addCase(loginWithGoogle.rejected, (state, action) => {

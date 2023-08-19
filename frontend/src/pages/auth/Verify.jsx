@@ -8,19 +8,18 @@ const Verify = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { verificationToken } = useParams();
-  const { isLoading } = useSelector((state) => state.auth);
+  const { isLoading, isSuccess, message } = useSelector((state) => state.auth);
 
-  const { isSuccess } = useSelector((state) => state.auth);
   const verifyAccount = async () => {
     await dispatch(verifyEmail(verificationToken));
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    dispatch(RESET());
+    if (isSuccess && message.includes("Email verified!")) {
       navigate("/login");
     }
-    dispatch(RESET());
-  }, [isSuccess, navigate, dispatch]);
+  }, [isSuccess, message, navigate, dispatch]);
 
   return (
     <section>

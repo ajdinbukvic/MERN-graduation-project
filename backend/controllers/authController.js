@@ -69,7 +69,6 @@ exports.login = asyncHandler(async (req, res, next) => {
   const ua = parser(req.headers['user-agent']);
   const userAgent = ua.ua;
   const isAllowedUserAgent = user.userAgent.includes(userAgent);
-  console.log(isAllowedUserAgent);
   if (!isAllowedUserAgent) {
     await new Email(user, userAgent).sendLoginWithNewDevice();
     user.userAgent.push(userAgent);
@@ -112,9 +111,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   }).save();
 
   try {
-    const resetURL = `${req.protocol}://${req.get(
-      'host',
-    )}/api/auth/resetPassword/${resetToken}`;
+    const resetURL = `${process.env.FRONTEND_URL}resetPassword/${resetToken}`;
     await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
@@ -130,13 +127,13 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 });
 
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-  const hashedToken = crypto
-    .createHash('sha256')
-    .update(req.params.token)
-    .digest('hex');
+  // const hashedToken = crypto
+  //   .createHash('sha256')
+  //   .update(req.params.token)
+  //   .digest('hex');
 
   const userToken = await Token.findOne({
-    resetToken: hashedToken,
+    resetToken: req.params.token,
     expiresAt: { $gt: Date.now() },
   });
 
@@ -153,7 +150,11 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, res);
+  //createSendToken(user, 200, res);
+  res.status(200).json({
+    status: 'success',
+    message: 'Password reset successful!',
+  });
 });
 
 exports.changePassword = asyncHandler(async (req, res, next) => {

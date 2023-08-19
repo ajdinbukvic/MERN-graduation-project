@@ -30,11 +30,12 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 router.post('/googleLogin', googleLogin);
 router.post('/facebookLogin', facebookLogin);
 
+router.post('/refresh', refresh);
+
 // Protect all routes after this middleware
 router.use(protect);
 
 router.get('/logout', authController.logout);
-router.post('/refresh', refresh);
 router.patch('/changePassword', authController.changePassword);
 
 router.post('/generateOTP', generateOTP);

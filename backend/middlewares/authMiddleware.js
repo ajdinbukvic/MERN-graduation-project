@@ -7,6 +7,7 @@ const { createSendToken } = require('../utils/token');
 
 exports.isLoggedIn = asyncHandler(async (req, res) => {
   const token = req.cookies.jwt;
+
   if (!token) {
     return res.json(false);
   }
@@ -33,12 +34,17 @@ exports.refresh = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const decoded = await promisify(jwt.verify)(
-    token,
-    process.env.JWT_REFRESH_SECRET,
-  );
+  let decodedToken;
+  try {
+    decodedToken = await promisify(jwt.verify)(
+      token,
+      process.env.JWT_REFRESH_SECRET,
+    );
+  } catch (err) {
+    return next(new CustomError('Token not valid or has expired.', 401));
+  }
 
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(decodedToken.id);
   if (!currentUser) {
     return next(
       new CustomError(
@@ -48,7 +54,7 @@ exports.refresh = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (currentUser.changedPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decodedToken.iat)) {
     return next(
       new CustomError(
         'User recently changed password! Please log in again.',
@@ -80,12 +86,17 @@ exports.protect = asyncHandler(async (req, res, next) => {
     );
   }
 
-  const decoded = await promisify(jwt.verify)(
-    token,
-    process.env.JWT_ACCESS_SECRET,
-  );
+  let decodedToken;
+  try {
+    decodedToken = await promisify(jwt.verify)(
+      token,
+      process.env.JWT_ACCESS_SECRET,
+    );
+  } catch (err) {
+    return next(new CustomError('Token not valid or has expired.', 401));
+  }
 
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(decodedToken.id);
   if (!currentUser) {
     return next(
       new CustomError(
@@ -95,9 +106,12 @@ exports.protect = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (currentUser.changedPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decodedToken.iat)) {
     return next(
-      new AppError('User recently changed password! Please log in again.', 401),
+      new CustomError(
+        'User recently changed password! Please log in again.',
+        401,
+      ),
     );
   }
 

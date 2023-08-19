@@ -11,7 +11,7 @@ import PasswordInput from "../../components/passwordInput/PasswordInput";
 
 const initialState = {
   password: "",
-  password2: "",
+  passwordConfirm: "",
 };
 
 const Reset = () => {
@@ -19,7 +19,7 @@ const Reset = () => {
   const navigate = useNavigate();
 
   const [formData, setformData] = useState(initialState);
-  const { password, password2 } = formData;
+  const { password, passwordConfirm } = formData;
   const { resetToken } = useParams();
 
   const { isLoading, isError, isSuccess, isLoggedIn, message } = useSelector(
@@ -34,16 +34,16 @@ const Reset = () => {
   const reset = async (e) => {
     e.preventDefault();
 
-    if (password.length < 6) {
-      return toast.error("Passwords must be up to 6 characters");
+    if (password.length < 8) {
+      return toast.error("Lozinka mora biti duga minimalno 8 karaktera.");
     }
-    if (password !== password2) {
-      return toast.error("Passwords do not match");
+    if (password !== passwordConfirm) {
+      return toast.error("Lozinke moraju biti jednake.");
     }
 
     const userData = {
       password,
-      password2,
+      passwordConfirm,
     };
 
     await dispatch(resetPassword({ userData, resetToken }));
@@ -51,7 +51,7 @@ const Reset = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && message.includes("Reset Successful")) {
+    if (isSuccess && message.includes("Password reset successful!")) {
       navigate("/login");
     }
 
@@ -66,11 +66,11 @@ const Reset = () => {
           <div className="--flex-center">
             <MdPassword size={35} color="#999" />
           </div>
-          <h2>Reset Password</h2>
+          <h2>Resetovanje lozinke</h2>
 
           <form onSubmit={reset}>
             <PasswordInput
-              placeholder="New Password"
+              placeholder="Nova lozinka"
               required
               name="password"
               value={password}
@@ -78,22 +78,22 @@ const Reset = () => {
             />
 
             <PasswordInput
-              placeholder="Confirm New Password"
+              placeholder="Potvrda nove lozinke"
               required
-              name="password2"
-              value={password2}
+              name="passwordConfirm"
+              value={passwordConfirm}
               onChange={handleInputChange}
             />
 
             <button type="submit" className="--btn --btn-primary --btn-block">
-              Reset Password
+              Resetuj lozinku
             </button>
             <div className={styles.links}>
               <p>
-                <Link to="/">- Home</Link>
+                <Link to="/">- Početna</Link>
               </p>
               <p>
-                <Link to="/login">- Login</Link>
+                <Link to="/login">- Prijava</Link>
               </p>
             </div>
           </form>

@@ -83,9 +83,9 @@ const Profile = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    dispatch(getUser());
-  }, [dispatch]);
+  // useLayoutEffect(() => {
+  //   dispatch(getUser());
+  // }, [dispatch]);
 
   useLayoutEffect(() => {
     if (user) {
@@ -193,9 +193,8 @@ const Profile = () => {
 
 export const UserName = () => {
   const { user } = useSelector((state) => state.auth);
-
   const username = user?.name || "...";
-  return <p className="--color-white">Hi, {shortenText(username, 10)} |</p>;
+  return <p className="--color-white">Pozdrav, {username} |</p>;
 };
 
 export default Profile;

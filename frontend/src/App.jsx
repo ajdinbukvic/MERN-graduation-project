@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -22,8 +21,6 @@ import {
 } from "./redux/features/auth/authSlice";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginWithCode from "./pages/auth/LoginWithCode";
-
-axios.defaults.withCredentials = true;
 
 function App() {
   const dispatch = useDispatch();
