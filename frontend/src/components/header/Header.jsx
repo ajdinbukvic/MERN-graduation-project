@@ -44,6 +44,11 @@ const Header = () => {
           </ShowOnLogin>
           <ShowOnLogout>
             <li>
+              <button className="--btn --btn-danger">
+                <Link to="/register">Registracija</Link>
+              </button>
+            </li>
+            <li>
               <button className="--btn --btn-primary">
                 <Link to="/login">Prijava</Link>
               </button>
@@ -58,7 +63,7 @@ const Header = () => {
             </li>
 
             <li>
-              <button className="--btn --btn-secondary" onClick={logoutUser}>
+              <button className="--btn --btn-danger" onClick={logoutUser}>
                 Odjava
               </button>
             </li>

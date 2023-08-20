@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "../../components/card/Card";
 import PageMenu from "../../components/pageMenu/PageMenu";
 import PasswordInput from "../../components/passwordInput/PasswordInput";
@@ -14,9 +14,9 @@ import {
 import { SpinnerImg } from "../../components/loader/Loader";
 import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser";
 const initialState = {
-  oldPassword: "",
+  currentPassword: "",
   password: "",
-  password2: "",
+  passwordConfirm: "",
 };
 
 const ChangePassword = () => {
@@ -24,9 +24,8 @@ const ChangePassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setformData] = useState(initialState);
-  const { oldPassword, password, password2 } = formData;
-
-  const { isLoading } = useSelector((state) => state.auth);
+  const { currentPassword, password, passwordConfirm } = formData;
+  const { isLoading, isSuccess, message } = useSelector((state) => state.auth);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,75 +35,83 @@ const ChangePassword = () => {
   const updatePassword = async (e) => {
     e.preventDefault();
 
-    if (password !== password2) {
-      return toast.error("New passwords do not match");
+    if (password !== passwordConfirm) {
+      return toast.error("Nove lozinke se moraju podudarati.");
     }
 
     const userData = {
-      oldPassword,
+      currentPassword,
       password,
+      passwordConfirm,
     };
 
     await dispatch(changePassword(userData));
-    await dispatch(logout());
-    dispatch(RESET());
-    navigate("/login");
+    //await dispatch(logout());
   };
 
+  useEffect(() => {
+    dispatch(RESET());
+    if (isSuccess && message.includes("Password changed successfully!")) {
+      navigate("/login");
+      dispatch(logout());
+    }
+  }, [isSuccess, message, navigate, dispatch]);
+
   return (
-    <div>
-      <section>
-        <div className="container">
-          <PageMenu />
-          <h2>Change Password</h2>
-          <div className="--flex-start change-password">
-            <Card cardClass={"card"}>
-              <form onSubmit={updatePassword}>
-                <p>
-                  <label>Current Password:</label>
-                  <PasswordInput
-                    placeholder="Current Password"
-                    name="oldPassword"
-                    value={oldPassword}
-                    onChange={handleInputChange}
-                  />
-                </p>
-                <p>
-                  <label>New Password:</label>
-                  <PasswordInput
-                    placeholder="New Password"
-                    name="password"
-                    value={password}
-                    onChange={handleInputChange}
-                  />
-                </p>
-                <p>
-                  <label>New Password:</label>
-                  <PasswordInput
-                    placeholder="Confirm New Password"
-                    name="password2"
-                    value={password2}
-                    onChange={handleInputChange}
-                    onPaste={(e) => {
-                      e.preventDefault();
-                      toast.error("Cannot paste into input field.");
-                      return false;
-                    }}
-                  />
-                </p>
-                {isLoading ? (
-                  <SpinnerImg />
-                ) : (
-                  <button className="--btn --btn-block --btn-danger">
-                    Change Password
-                  </button>
-                )}
-              </form>
-            </Card>
+    <>
+      <div>
+        <section>
+          <div className="container">
+            <PageMenu />
+            <div className="--flex-center change-password">
+              <Card cardClass={"card"}>
+                <form onSubmit={updatePassword}>
+                  <p>
+                    <label>Trenutna lozinka:</label>
+                    <PasswordInput
+                      placeholder="Trenutna lozinka"
+                      name="currentPassword"
+                      value={currentPassword}
+                      onChange={handleInputChange}
+                    />
+                  </p>
+                  <p>
+                    <label>Nova lozinka:</label>
+                    <PasswordInput
+                      placeholder="Nova lozinka"
+                      name="password"
+                      value={password}
+                      onChange={handleInputChange}
+                    />
+                  </p>
+                  <p>
+                    <label>Potvrda nove lozinke:</label>
+                    <PasswordInput
+                      placeholder="Potvrda nove lozinke"
+                      name="passwordConfirm"
+                      value={passwordConfirm}
+                      onChange={handleInputChange}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        toast.error("Ne možete zalijepiti tekst u ovo polje.");
+                        return false;
+                      }}
+                    />
+                  </p>
+                  {isLoading ? (
+                    <SpinnerImg />
+                  ) : (
+                    <button className="--btn --btn-block --btn-danger">
+                      Ažuriraj lozinku
+                    </button>
+                  )}
+                </form>
+              </Card>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 };
 

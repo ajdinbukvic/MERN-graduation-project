@@ -180,5 +180,8 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
 
   await new Email(user).sendPasswordChanged();
 
-  createSendToken(user, 200, res);
+  res.status(200).json({
+    status: 'success',
+    message: 'Password changed successfully!',
+  });
 });

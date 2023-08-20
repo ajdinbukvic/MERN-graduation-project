@@ -109,7 +109,8 @@ export const getLoginStatus = async () => {
 export const changePassword = async (formData) => {
   try {
     const response = await axiosPrivate.patch(`auth/changePassword`, formData);
-    return response.data;
+    return response.data.message;
+    //toast.success(response.data.message);
   } catch (error) {
     const message =
       (error.response && error.response.data && error.response.data.message) ||

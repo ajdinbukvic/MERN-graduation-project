@@ -8,14 +8,17 @@ const PageMenu = () => {
       <nav className="--btn-google --p --mb">
         <ul className="home-links">
           <li>
-            <NavLink to="/profile">Profile</NavLink>
+            <NavLink to="/profile">Profil</NavLink>
           </li>
           <li>
-            <NavLink to="/change-password">Change Password</NavLink>
+            <NavLink to="/changePassword">Promjena lozinke</NavLink>
+          </li>
+          <li>
+            <NavLink to="/twoFactorAuth">Dvofaktorska autentifikacija</NavLink>
           </li>
           <AdminAuthorLink>
             <li>
-              <NavLink to="/users">Users</NavLink>
+              <NavLink to="/users">Korisnici</NavLink>
             </li>
           </AdminAuthorLink>
         </ul>

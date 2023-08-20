@@ -26,10 +26,7 @@ export const AdminAuthorLink = ({ children }) => {
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const userRole = useSelector(selectUser);
 
-  if (
-    isLoggedIn &&
-    (userRole?.role === "admin" || userRole?.role === "author")
-  ) {
+  if (isLoggedIn && userRole?.role === "admin") {
     return <> {children}</>;
   }
   return null;

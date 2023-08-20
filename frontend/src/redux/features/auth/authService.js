@@ -60,7 +60,7 @@ const verifyEmail = async (verificationToken) => {
 
 // Change Password
 const changePassword = async (userData) => {
-  const response = await axiosPublic.patch("auth/changePassword", userData);
+  const response = await axiosPrivate.patch("auth/changePassword", userData);
   return response.data.message;
 };
 

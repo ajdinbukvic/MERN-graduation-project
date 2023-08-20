@@ -14,7 +14,7 @@ import "./UserList.scss";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import ChangeRole from "../../components/changeRole/ChangeRole";
-import { shortenText } from "../profile/Profile";
+//import { shortenText } from "../profile/Profile";
 import Search from "../../components/search/Search";
 import ReactPaginate from "react-paginate";
 import {
@@ -107,7 +107,7 @@ const UserList = () => {
           <div className="table">
             <div className="--flex-between">
               <span>
-                <h3>All Users</h3>
+                <h3>Svi korisnici</h3>
               </span>
               <span>
                 <Search
@@ -117,7 +117,7 @@ const UserList = () => {
               </span>
             </div>
             {!isLoading && users.length === 0 ? (
-              <p>No user found</p>
+              <p>Trenutno nema korisnika.</p>
             ) : (
               <table>
                 <thead>
@@ -138,7 +138,7 @@ const UserList = () => {
                     return (
                       <tr key={_id}>
                         <td>{index + 1}</td>
-                        <td>{shortenText(name, 16)}</td>
+                        <td>{name}</td>
                         <td>{email}</td>
                         <td>{role}</td>
                         <td>

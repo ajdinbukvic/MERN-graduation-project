@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
   background-color: #eee;
   min-height: 80vh;
 }
@@ -20,8 +21,9 @@
   }
 }
 .hero-image {
-  width: 50%;
+  width: 100%;
   text-align: center;
+  background-color: #030b6b;
 }
 .hero-image img {
   width: 80%;

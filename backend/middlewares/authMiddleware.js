@@ -106,14 +106,14 @@ exports.protect = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (currentUser.changedPasswordAfter(decodedToken.iat)) {
-    return next(
-      new CustomError(
-        'User recently changed password! Please log in again.',
-        401,
-      ),
-    );
-  }
+  // if (currentUser.changedPasswordAfter(decodedToken.iat)) {
+  //   return next(
+  //     new CustomError(
+  //       'User recently changed password! Please log in again.',
+  //       401,
+  //     ),
+  //   );
+  // }
 
   req.user = currentUser;
   res.locals.user = currentUser;

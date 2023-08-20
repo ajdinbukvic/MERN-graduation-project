@@ -4,18 +4,19 @@ import "./Profile.scss";
 import PageMenu from "../../components/pageMenu/PageMenu";
 import Notification from "../../components/notification/Notification";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser, updateUser } from "../../redux/features/auth/authSlice";
+//import { getUser } from "../../redux/features/auth/authSlice";
+import { updateUser } from "../../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
 import Loader from "../../components/loader/Loader";
 import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser";
 
-export const shortenText = (text, n) => {
-  if (text.length > n) {
-    const shortenedText = text.substring(0, n).concat("...");
-    return shortenedText;
-  }
-  return text;
-};
+// export const shortenText = (text, n) => {
+//   if (text.length > n) {
+//     const shortenedText = text.substring(0, n).concat("...");
+//     return shortenedText;
+//   }
+//   return text;
+// };
 
 const Profile = () => {
   useRedirectLoggedOutUser("/login");
@@ -26,8 +27,6 @@ const Profile = () => {
   const initialState = {
     name: user?.name,
     email: user?.email,
-    phone: user?.phone,
-    bio: user?.bio,
     photo: user?.photo,
     role: user?.role,
     isVerified: user?.isVerified,
@@ -71,13 +70,11 @@ const Profile = () => {
       // Save Profile To DB
       const userData = {
         name: profile.name,
-        phone: profile.phone,
-        bio: profile.bio,
         photo: profileImage ? imageURL : profile.photo,
       };
 
       dispatch(updateUser(userData));
-      toast.success("User updated");
+      toast.success("Podaci su uspješno ažurirani.");
     } catch (error) {
       toast.error(error.message);
     }
@@ -93,14 +90,12 @@ const Profile = () => {
         ...profile,
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        bio: user.bio,
         photo: user.photo,
         role: user.role,
         isVerified: user.isVerified,
       });
     }
-  }, [user]);
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -108,9 +103,8 @@ const Profile = () => {
       <section>
         <div className="container">
           <PageMenu />
-          <h2>Profile</h2>
-
-          <div className="--flex-start profile">
+          <h2 className="--flex-center">Informacije o korisniku</h2>
+          <div className="--flex-center profile">
             <Card cardClass={"card"}>
               {isLoading && <Loader />}
               {!isLoading && user && (
@@ -121,13 +115,12 @@ const Profile = () => {
                         src={imagePreview === null ? user.photo : imagePreview}
                         alt="profilepic"
                       />
-                      <h3>Role: {user?.role}</h3>
+                      <h3>Uloga: {user?.role}</h3>
                     </div>
                   </div>
-
                   <form onSubmit={saveProfile}>
                     <p>
-                      <label>Change Photo:</label>
+                      <label>Promjena slike:</label>
                       <input
                         type="file"
                         accept="image/*"
@@ -136,7 +129,7 @@ const Profile = () => {
                       />
                     </p>
                     <p>
-                      <label>Name:</label>
+                      <label>Ime i prezime:</label>
                       <input
                         type="text"
                         name="name"
@@ -154,31 +147,8 @@ const Profile = () => {
                         disabled
                       />
                     </p>
-                    <p>
-                      <label>Phone:</label>
-                      <input
-                        type="text"
-                        name="phone"
-                        value={profile?.phone}
-                        onChange={handleInputChange}
-                      />
-                    </p>
-                    <p>
-                      <label>Bio:</label>
-                      <textarea
-                        name="bio"
-                        value={profile?.bio}
-                        onChange={handleInputChange}
-                        cols="30"
-                        rows="10"
-                      ></textarea>
-                    </p>
-                    {/* {isLoading ? (
-                      <SpinnerImg />
-                    ) : (
-                    )} */}
                     <button className="--btn --btn-block --btn-primary">
-                      Update Profile
+                      Ažuriraj podatke
                     </button>
                   </form>
                 </div>
