@@ -13,6 +13,7 @@ import ChangePassword from "./pages/changePassword/ChangePassword";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import UserList from "./pages/userList/UserList";
+import TwoFactor from "./pages/twoFactorAuth/TwoFactor";
 import {
   getLoginStatus,
   getUser,
@@ -49,7 +50,7 @@ function App() {
               }
             />
             <Route path="/login" element={<Login />} />
-            <Route path="/loginWithCode" element={<LoginWithCode />} />
+            <Route path="/loginWithCode/:email" element={<LoginWithCode />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotPassword" element={<Forgot />} />
             <Route path="/resetPassword/:resetToken" element={<Reset />} />
@@ -74,6 +75,14 @@ function App() {
               element={
                 <Layout>
                   <ChangePassword />
+                </Layout>
+              }
+            />
+            <Route
+              path="/twoFactorAuth"
+              element={
+                <Layout>
+                  <TwoFactor />
                 </Layout>
               }
             />

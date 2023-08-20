@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.2.0",
     "@react-oauth/google": "^0.11.1",
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^6.0.0",
@@ -21,26 +22,34 @@
     "mem": "^9.0.2",
     "node-sass": "^9.0.0",
     "prop-types": "^15.8.1",
+    "qrcode": "^1.5.3",
     "react": "^18.2.0",
     "react-confirm-alert": "^3.0.6",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.4",
     "react-icons": "^4.10.1",
     "react-paginate": "^8.2.0",
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.15.0",
     "react-scripts": "^5.0.1",
     "react-toastify": "^9.1.3",
-    "web-vitals": "^3.4.0"
+    "redux-persist": "^6.0.0",
+    "tailwind-merge": "^1.14.0",
+    "web-vitals": "^3.4.0",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "autoprefixer": "^10.4.15",
     "eslint": "^8.44.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
+    "postcss": "^8.4.28",
     "sass": "^1.66.0",
+    "tailwindcss": "^3.3.3",
     "vite": "^4.4.0"
   }
 }

@@ -31,6 +31,7 @@ router.post('/googleLogin', googleLogin);
 router.post('/facebookLogin', facebookLogin);
 
 router.post('/refresh', refresh);
+router.post('/validateOTP', validateOTP);
 
 // Protect all routes after this middleware
 router.use(protect);
@@ -40,7 +41,6 @@ router.patch('/changePassword', authController.changePassword);
 
 router.post('/generateOTP', generateOTP);
 router.post('/verifyOTP', verifyOTP);
-router.post('/validateOTP', validateOTP);
 router.post('/disableOTP', disableOTP);
 
 module.exports = router;

@@ -71,6 +71,29 @@ const loginWithGoogle = async (userToken) => {
 };
 
 // 2FA Login
+const generateOTP = async (email) => {
+  const response = await axiosPrivate.post("auth/generateOTP", email);
+  return response.data;
+};
+
+const verifyOTP = async (token) => {
+  const response = await axiosPrivate.post("auth/verifyOTP", token);
+  return response.data;
+};
+
+const validateOTP = async (token, email) => {
+  const response = await axiosPrivate.post("auth/validateOTP", {
+    token,
+    email,
+  });
+  return response.data;
+};
+
+const disableOTP = async () => {
+  const response = await axiosPrivate.post("auth/disableOTP");
+  return response.data;
+};
+
 const loginWithCode = async (code) => {
   const response = await axiosPrivate.post("auth/validateOTP", code);
   return response.data;
@@ -123,6 +146,10 @@ const authService = {
   verifyEmail,
   loginWithGoogle,
   loginWithCode,
+  generateOTP,
+  verifyOTP,
+  validateOTP,
+  disableOTP,
 };
 
 export default authService;

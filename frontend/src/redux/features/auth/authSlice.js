@@ -171,9 +171,77 @@ export const loginWithGoogle = createAsyncThunk(
   }
 );
 
-// Login With Code
-export const loginWithCode = createAsyncThunk(
+export const generateOTP = createAsyncThunk(
+  "auth/generateOTP",
+  async (email, thunkAPI) => {
+    try {
+      return await authService.generateOTP(email);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const verifyOTP = createAsyncThunk(
+  "auth/verifyOTP",
+  async (token, thunkAPI) => {
+    try {
+      return await authService.verifyOTP(token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const validateOTP = createAsyncThunk(
   "auth/validateOTP",
+  async ({ token, email }, thunkAPI) => {
+    try {
+      return await authService.validateOTP(token, email);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const disableOTP = createAsyncThunk(
+  "auth/disableOTP",
+  async (_, thunkAPI) => {
+    try {
+      return await authService.disableOTP();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+//Login With Code
+export const loginWithCode = createAsyncThunk(
+  "auth/loginWithCode",
   async ({ code, email }, thunkAPI) => {
     try {
       return await authService.loginWithCode(code, email);
@@ -523,7 +591,7 @@ const authSlice = createSlice({
         state.user = null;
         toast.error(action.payload);
       })
-      // Login With Code
+      //Login With Code
       .addCase(loginWithCode.pending, (state) => {
         state.isLoading = true;
       })
@@ -540,6 +608,71 @@ const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+        toast.error(action.payload);
+      })
+      .addCase(generateOTP.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(generateOTP.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(generateOTP.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      .addCase(verifyOTP.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(verifyOTP.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        state.user = action.payload.data.user;
+        toast.success("Uspješno ste omogućili 2FA.");
+      })
+      .addCase(verifyOTP.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      .addCase(validateOTP.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(validateOTP.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isLoggedIn = true;
+        state.twoFactor = false;
+        state.user = action.payload.data.user;
+        toast.success("Uspješno ste se prijavili");
+      })
+      .addCase(validateOTP.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
+        toast.error(action.payload);
+      })
+      .addCase(disableOTP.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(disableOTP.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload.data.user;
+        state.message = action.payload;
+        toast.success("Uspješno ste onemogućili 2FA.");
+      })
+      .addCase(disableOTP.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
         toast.error(action.payload);
       });
   },

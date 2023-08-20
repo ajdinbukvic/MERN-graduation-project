@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const CustomError = require('./../utils/customError');
 const OTPAuth = require('otpauth');
 const { encode } = require('hi-base32');
+const { createSendToken } = require('../utils/token');
 
 const generateRandomBase32 = () => {
   const buffer = crypto.randomBytes(15);
@@ -35,7 +36,7 @@ exports.generateOTP = asyncHandler(async (req, res, next) => {
 
   user.otpAuthUrl = otpAuthUrl;
   user.otpBase32 = base32Secret;
-  await user.save();
+  await user.save({ validateBeforeSave: false });
 
   res.status(200).json({
     base32: base32Secret,
@@ -57,33 +58,34 @@ exports.verifyOTP = asyncHandler(async (req, res, next) => {
     label: 'Diplomski App',
     algorithm: 'SHA1',
     digits: 6,
-    period: 15,
     secret: user?.otpBase32,
   });
 
   const delta = totp.validate({ token });
 
-  if (!delta) {
+  if (delta === null) {
     return next(new CustomError('Token is invalid or has expired', 401));
   }
 
   user.otpEnabled = true;
   user.otpVerified = true;
-  await user.save();
+  await user.save({ validateBeforeSave: false });
 
   res.status(200).json({
-    otpEnabled: true,
-    otpVerified: true,
+    status: 'success',
+    data: {
+      user,
+    },
   });
 });
 
 exports.validateOTP = asyncHandler(async (req, res, next) => {
-  const { token } = req.body;
+  const { token, email } = req.body;
 
-  const user = await User.findOne({ _id: req.user._id });
+  const user = await User.findOne({ email });
 
   if (!user) {
-    return next(new CustomError('There is no user with that ID.', 404));
+    return next(new CustomError('There is no user with that email.', 404));
   }
 
   const totp = new OTPAuth.TOTP({
@@ -91,28 +93,24 @@ exports.validateOTP = asyncHandler(async (req, res, next) => {
     label: 'Diplomski App',
     algorithm: 'SHA1',
     digits: 6,
-    period: 15,
     secret: user?.otpBase32,
   });
 
   const delta = totp.validate({ token, window: 1 });
 
-  if (!delta) {
+  if (delta === null) {
     return next(new CustomError('Token is invalid or has expired', 401));
   }
 
-  res.status(200).json({
-    otpValid: true,
-  });
+  createSendToken(user, 200, res);
 });
 
 exports.disableOTP = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { otpEnabled: false },
+    { otpEnabled: false, otpVerified: false },
     {
       new: true,
-      runValidators: true,
     },
   );
 
@@ -123,7 +121,7 @@ exports.disableOTP = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: {
-      data: user,
+      user,
     },
   });
 });

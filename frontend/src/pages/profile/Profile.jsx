@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import Card from "../../components/card/Card";
 import "./Profile.scss";
 import PageMenu from "../../components/pageMenu/PageMenu";
-import Notification from "../../components/notification/Notification";
+//import Notification from "../../components/notification/Notification";
 import { useDispatch, useSelector } from "react-redux";
 //import { getUser } from "../../redux/features/auth/authSlice";
 import { updateUser } from "../../redux/features/auth/authSlice";
@@ -99,7 +99,7 @@ const Profile = () => {
 
   return (
     <>
-      {!profile.isVerified && <Notification />}
+      {/* {!profile.isVerified && <Notification />} */}
       <section>
         <div className="container">
           <PageMenu />

@@ -4,12 +4,12 @@ import Card from "../../components/card/Card";
 import { GrInsecure } from "react-icons/gr";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginWithCode, RESET } from "../../redux/features/auth/authSlice";
+import { validateOTP, RESET } from "../../redux/features/auth/authSlice";
 import Loader from "../../components/loader/Loader";
 import { toast } from "react-toastify";
 
 const LoginWithCode = () => {
-  const [loginCode, setLoginCode] = useState("");
+  const [token, setToken] = useState("");
   const { email } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -18,28 +18,22 @@ const LoginWithCode = () => {
     (state) => state.auth
   );
 
-  const sendUserLoginCode = async () => {
-    await dispatch(RESET());
-  };
-
   const loginUserWithCode = async (e) => {
     e.preventDefault();
-    if (loginCode === "") {
-      return toast.error("Please fill in login access code");
+    if (token === "") {
+      return toast.error("Molimo unesite kod za nastavak.");
     }
-    if (loginCode.length !== 6) {
-      return toast.error("Access code must be 6 characters");
+    if (token.length !== 6) {
+      return toast.error("Kod mora biti dug 6 karaktera.");
     }
-    const code = {
-      loginCode,
-    };
-    await dispatch(loginWithCode({ code, email }));
+
+    await dispatch(validateOTP({ token, email }));
     await dispatch(RESET());
   };
 
   useEffect(() => {
     if (isLoggedIn && isSuccess) {
-      navigate("/profile");
+      navigate("/");
     }
     dispatch(RESET());
   }, [isSuccess, isLoggedIn, navigate, dispatch]);
@@ -52,30 +46,27 @@ const LoginWithCode = () => {
           <div className="--flex-center">
             <GrInsecure size={35} color="#999" />
           </div>
-          <h2>Enter Access Code</h2>
+          <h2>Unesite 2FA kod</h2>
 
           <form onSubmit={loginUserWithCode}>
             <input
               type="text"
-              placeholder="Access Code"
+              placeholder="TOTP kod"
               required
-              name="accessCode"
-              value={loginCode}
-              onChange={(e) => setLoginCode(e.target.value)}
+              name="token"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
             />
 
             <button type="submit" className="--btn --btn-primary --btn-block">
-              Proceed To Login
+              Nastavi na profil
             </button>
             <span className="--flex-center">
-              Check your email for login access code
+              Provjerite vašu 2FA aplikaciju za pristup TOTP kodu
             </span>
             <div className={styles.links}>
               <p>
-                <Link to="/">- Home</Link>
-              </p>
-              <p onClick={sendUserLoginCode} className="v-link">
-                <b> Resend Code</b>
+                <Link to="/">- Početna</Link>
               </p>
             </div>
           </form>

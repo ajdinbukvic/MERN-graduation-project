@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --nav-width: 68px;
   --header-height: 45px;
@@ -57,6 +61,22 @@ section {
 
 .header {
   padding-top: 2rem;
+}
+
+.marginTop {
+  margin-top: 20rem;
+}
+
+.redBorder {
+  border: 1px solid red;
+}
+
+.blueBorder {
+  border: 1px solid #030b6b;
+}
+
+.modalZoom {
+  zoom: 125%;
 }
 
 /* UTILITY CLASSES */

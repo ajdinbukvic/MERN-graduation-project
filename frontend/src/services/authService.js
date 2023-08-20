@@ -146,3 +146,67 @@ export const updateUser = async (formData) => {
     toast.error(message);
   }
 };
+
+export const generateOTP = async (email) => {
+  try {
+    const response = await axiosPrivate.post(`auth/generateOTP`, email);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+export const verifyOTP = async (token) => {
+  try {
+    const response = await axiosPrivate.post(`auth/verifyOTP`, token);
+    if (response.statusText === "OK") {
+      toast.success("Uspješno ste omogućili 2FA.");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+export const validateOTP = async (token, email) => {
+  try {
+    const response = await axiosPrivate.post(`auth/validateOTP`, {
+      token,
+      email,
+    });
+    if (response.statusText === "OK") {
+      toast.success("Uspješno ste se prijavili.");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+export const disableOTP = async () => {
+  try {
+    const response = await axiosPrivate.post(`auth/disableOTP`);
+    if (response.statusText === "OK") {
+      toast.success("Uspješno ste onemogućili 2FA.");
+    }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
