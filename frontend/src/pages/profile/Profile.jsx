@@ -5,7 +5,7 @@ import PageMenu from "../../components/pageMenu/PageMenu";
 //import Notification from "../../components/notification/Notification";
 import { useDispatch, useSelector } from "react-redux";
 //import { getUser } from "../../redux/features/auth/authSlice";
-import { updateUser } from "../../redux/features/auth/authSlice";
+import { updateMe, getMe } from "../../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
 import Loader from "../../components/loader/Loader";
 import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser";
@@ -21,9 +21,11 @@ import useRedirectLoggedOutUser from "../../customHook/useRedirectLoggedOutUser"
 const Profile = () => {
   useRedirectLoggedOutUser("/login");
   const dispatch = useDispatch();
-
+  //const defaultPath = `C:\\Users\\DT User3\\Desktop\\Diplomski MERN\\backend\\uploads\\users\\`;
   const { user, isLoading } = useSelector((state) => state.auth);
-
+  const photoPath = user?.photo.startsWith("https")
+    ? user.photo
+    : `http://localhost:5000/uploads/users/${user.photo}`;
   const initialState = {
     name: user?.name,
     email: user?.email,
@@ -47,42 +49,45 @@ const Profile = () => {
 
   const saveProfile = async (e) => {
     e.preventDefault();
-    let imageURL;
-    try {
-      if (
-        profileImage !== null &&
-        (profileImage.type === "image/jpeg" ||
-          profileImage.type === "image/jpg" ||
-          profileImage.type === "image/png")
-      ) {
-        const image = new FormData();
-        image.append("file", profileImage);
+    //let imageURL;
+    // try {
+    //   if (
+    //     profileImage !== null &&
+    //     (profileImage.type === "image/jpeg" ||
+    //       profileImage.type === "image/jpg" ||
+    //       profileImage.type === "image/png")
+    //   ) {
+    //     const image = new FormData();
+    //     image.append("file", profileImage);
+    //     //Save the image to Cloudinary
+    //     const response = await fetch(
+    //       "https://api.cloudinary.com/v1_1/zinotrust/image/upload",
+    //       { method: "post", body: image }
+    //     );
+    //     const imgData = await response.json();
+    //     imageURL = imgData.url.toString();
+    //   }
 
-        // Save the image to Cloudinary
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/zinotrust/image/upload",
-          { method: "post", body: image }
-        );
-        const imgData = await response.json();
-        imageURL = imgData.url.toString();
-      }
+    const formData = new FormData();
+    formData.append("name", profile.name);
+    if (profileImage) formData.append("photo", profileImage);
 
-      // Save Profile To DB
-      const userData = {
-        name: profile.name,
-        photo: profileImage ? imageURL : profile.photo,
-      };
+    // Save Profile To DB
+    // const userData = {
+    //   name: profile.name,
+    //   photo: profileImage,
+    // };
 
-      dispatch(updateUser(userData));
-      toast.success("Podaci su uspješno ažurirani.");
-    } catch (error) {
-      toast.error(error.message);
-    }
+    await dispatch(updateMe(formData));
+    toast.success("Podaci su uspješno ažurirani.");
+    // } catch (error) {
+    //   toast.error(error.message);
+    // }
   };
 
-  // useLayoutEffect(() => {
-  //   dispatch(getUser());
-  // }, [dispatch]);
+  useLayoutEffect(() => {
+    dispatch(getMe());
+  }, [dispatch]);
 
   useLayoutEffect(() => {
     if (user) {
@@ -112,7 +117,8 @@ const Profile = () => {
                   <div className="profile-photo">
                     <div>
                       <img
-                        src={imagePreview === null ? user.photo : imagePreview}
+                        crossOrigin="anonymous"
+                        src={imagePreview === null ? photoPath : imagePreview}
                         alt="profilepic"
                       />
                       <h3>Uloga: {user?.role}</h3>

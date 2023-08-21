@@ -13,6 +13,7 @@ const CustomError = require('./utils/customError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const authRouter = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -67,6 +68,7 @@ app.use(cookieParser());
 // ROUTES
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRouter);
+app.use('/api/users', userRoutes);
 
 // Error handling
 app.all('*', (req, res, next) => {

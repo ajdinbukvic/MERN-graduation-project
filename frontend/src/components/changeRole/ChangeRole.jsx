@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { getUsers, upgradeUser } from "../../redux/features/auth/authSlice";
+import { getUsers, updateUserRole } from "../../redux/features/auth/authSlice";
 
 const ChangeRole = ({ _id }) => {
   const [userRole, setUserRole] = useState("");
@@ -13,15 +13,17 @@ const ChangeRole = ({ _id }) => {
     e.preventDefault();
     // console.log(userRole + _id);
     if (!userRole) {
-      return toast.error("please select a user role");
+      return toast.error("Morate prvo odabrati ulogu.");
     }
+
     const userData = {
       role: userRole,
       id: _id,
     };
 
-    await dispatch(upgradeUser(userData));
+    await dispatch(updateUserRole(userData));
     await dispatch(getUsers());
+    setUserRole("-- odaberite --");
   };
 
   return (
@@ -31,11 +33,10 @@ const ChangeRole = ({ _id }) => {
         onSubmit={(e) => changeUserRole(e, _id, userRole)}
       >
         <select value={userRole} onChange={(e) => setUserRole(e.target.value)}>
-          <option value="">-- select --</option>
-          <option value="subscriber">Subscriber</option>
-          <option value="author">Author</option>
+          <option value="">-- odaberite --</option>
+          <option value="student">Student</option>
+          <option value="profesor">Profesor</option>
           <option value="admin">Admin</option>
-          <option value="suspended">Suspended</option>
         </select>
         <button className="--btn --btn-primary" type="submit">
           <FaCheck size={15} />

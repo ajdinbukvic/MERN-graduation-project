@@ -120,33 +120,6 @@ export const changePassword = async (formData) => {
   }
 };
 
-// Get User Profile
-export const getUser = async () => {
-  try {
-    const response = await axiosPrivate.get(`auth/getuser`);
-    return response.data;
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    toast.error(message);
-  }
-};
-// Update Profile
-export const updateUser = async (formData) => {
-  try {
-    const response = await axiosPrivate.patch(`auth/updateuser`, formData);
-    return response.data;
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    toast.error(message);
-  }
-};
-
 export const generateOTP = async (email) => {
   try {
     const response = await axiosPrivate.post(`auth/generateOTP`, email);
@@ -201,6 +174,93 @@ export const disableOTP = async () => {
     if (response.statusText === "OK") {
       toast.success("Uspješno ste onemogućili 2FA.");
     }
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Get My profile
+export const getMe = async () => {
+  try {
+    const response = await axiosPrivate.get(`users/me`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Get User Profile
+export const getUser = async (id) => {
+  try {
+    const response = await axiosPrivate.get(`users/${id}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Get All Users
+export const getUsers = async () => {
+  try {
+    const response = await axiosPrivate.get(`users/`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Delete User Profile
+export const deleteUser = async (id) => {
+  try {
+    const response = await axiosPrivate.delete(`users/${id}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Update User Role
+export const updateUserRole = async (id, formData) => {
+  try {
+    const response = await axiosPrivate.patch(
+      `users/updateUserRole/${id}`,
+      formData
+    );
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Update Profile
+export const updateMe = async (formData) => {
+  try {
+    const response = await axiosPrivate.patch(`users/updateMe`, formData);
     return response.data;
   } catch (error) {
     const message =

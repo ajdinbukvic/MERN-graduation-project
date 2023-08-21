@@ -99,34 +99,44 @@ const loginWithCode = async (code) => {
   return response.data;
 };
 
-// Get User Profile
-const getUser = async () => {
-  const response = await axiosPrivate.get("auth/getUser");
+// Get My profile
+const getMe = async () => {
+  const response = await axiosPrivate.get(`users/me`);
   return response.data;
 };
 
-// Update User
-const updateUser = async (userData) => {
-  const response = await axiosPrivate.patch("auth/updateUser", userData);
+// Get User
+const getUser = async (id) => {
+  const response = await axiosPrivate.get(`users/${id}`);
   return response.data;
 };
 
 // Get Users
 const getUsers = async () => {
-  const response = await axiosPrivate.get("auth/getUsers");
+  const response = await axiosPrivate.get("users/");
   return response.data;
 };
 
 // Delete User
 const deleteUser = async (id) => {
   //   console.log("delete:" + id);
-  const response = await axiosPrivate.delete("auth/delete" + id);
+  const response = await axiosPrivate.delete(`users/${id}`);
   return response.data.message;
 };
 
-// upgrade user
-const upgradeUser = async (userData) => {
-  const response = await axiosPrivate.patch("auth/upgrade", userData);
+// Update User Role
+const updateUserRole = async (userData) => {
+  const response = await axiosPrivate.patch(`users/${userData.id}`, {
+    role: userData.role,
+  });
+  return response.data;
+};
+
+// Update My Profile
+const updateMe = async (userData) => {
+  const response = await axiosPrivate.patch("users/updateMe", userData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data;
 };
 
@@ -138,11 +148,12 @@ const authService = {
   forgotPassword,
   resetPassword,
   getUser,
-  updateUser,
+  updateUserRole,
   changePassword,
   getUsers,
   deleteUser,
-  upgradeUser,
+  updateMe,
+  getMe,
   verifyEmail,
   loginWithGoogle,
   loginWithCode,

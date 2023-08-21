@@ -41,15 +41,15 @@ const UserList = () => {
 
   const confirmDelete = (id) => {
     confirmAlert({
-      title: "Delete This User",
-      message: "Are you sure you want to delete this user.",
+      title: "Brisanje korisnika",
+      message: "Da li ste sigurni da želite obrisati odabranog korisnika?",
       buttons: [
         {
-          label: "Delete",
+          label: "Izbriši",
           onClick: () => delUser(id),
         },
         {
-          label: "Cancel",
+          label: "Zatvori",
           // onClick: () => alert('Click No')
         },
       ],
@@ -122,12 +122,12 @@ const UserList = () => {
               <table>
                 <thead>
                   <tr>
-                    <th>s/n</th>
-                    <th>Name</th>
+                    <th>R. br.</th>
+                    <th>Ime i prezime</th>
                     <th>Email</th>
-                    <th>Role</th>
-                    <th>Change Role</th>
-                    <th>Action</th>
+                    <th>Uloga</th>
+                    <th>Promjena uloge</th>
+                    <th>Brisanje</th>
                   </tr>
                 </thead>
 
@@ -164,11 +164,11 @@ const UserList = () => {
           </div>
           <ReactPaginate
             breakLabel="..."
-            nextLabel="Next"
+            nextLabel="Sljedeća"
             onPageChange={handlePageClick}
             pageRangeDisplayed={3}
             pageCount={pageCount}
-            previousLabel="Prev"
+            previousLabel="Prethodna"
             renderOnZeroPageCount={null}
             containerClassName="pagination"
             pageLinkClassName="page-num"

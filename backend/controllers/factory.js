@@ -17,6 +17,9 @@ exports.deleteOne = (Model) =>
 
 exports.updateOne = (Model) =>
   asyncHandler(async (req, res, next) => {
+    if (req.user.id && req.user.id === req.params.id) {
+      return next(new CustomError('Cannot update own user data.', 400));
+    }
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,

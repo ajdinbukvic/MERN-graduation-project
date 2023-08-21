@@ -257,24 +257,11 @@ export const loginWithCode = createAsyncThunk(
   }
 );
 // Get User
-export const getUser = createAsyncThunk("auth/getUser", async (_, thunkAPI) => {
-  try {
-    return await authService.getUser();
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
-
-// Update User
-export const updateUser = createAsyncThunk(
-  "auth/updateUser",
-  async (userData, thunkAPI) => {
+export const getUser = createAsyncThunk(
+  "users/getUser",
+  async (id, thunkAPI) => {
     try {
-      return await authService.updateUser(userData);
+      return await authService.getUser(id);
     } catch (error) {
       const message =
         (error.response &&
@@ -287,9 +274,40 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-// Get Users
+// Get My Profile
+export const getMe = createAsyncThunk("users/getMe", async (_, thunkAPI) => {
+  try {
+    return await authService.getMe();
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+// Update User Role
+export const updateUserRole = createAsyncThunk(
+  "users/updateUserRole",
+  async (userData, thunkAPI) => {
+    try {
+      return await authService.updateUserRole(userData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Get All Users
 export const getUsers = createAsyncThunk(
-  "auth/getUsers",
+  "users/getUsers",
   async (_, thunkAPI) => {
     try {
       return await authService.getUsers();
@@ -307,7 +325,7 @@ export const getUsers = createAsyncThunk(
 
 // Delete User
 export const deleteUser = createAsyncThunk(
-  "auth/deleteUser",
+  "users/deleteUser",
   async (id, thunkAPI) => {
     try {
       return await authService.deleteUser(id);
@@ -323,12 +341,12 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
-// Upgrade user
-export const upgradeUser = createAsyncThunk(
-  "auth/upgradeUser",
+// Update user profile
+export const updateMe = createAsyncThunk(
+  "users/updateMe",
   async (userData, thunkAPI) => {
     try {
-      return await authService.upgradeUser(userData);
+      return await authService.updateMe(userData);
     } catch (error) {
       const message =
         (error.response &&
@@ -462,35 +480,6 @@ const authSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      // Get User
-      .addCase(getUser.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.user = action.payload;
-      })
-      .addCase(getUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-        toast.error(action.payload);
-      })
-      // Update user
-      .addCase(updateUser.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(updateUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
-        state.user = action.payload;
-      })
-      .addCase(updateUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
-      })
       // Change Password
       .addCase(changePassword.pending, (state) => {
         state.isLoading = true;
@@ -507,6 +496,37 @@ const authSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
+      // Get User
+      .addCase(getUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      // Update user role
+      .addCase(updateUserRole.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserRole.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(updateUserRole.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
       // Get Users
       .addCase(getUsers.pending, (state) => {
         state.isLoading = true;
@@ -514,7 +534,7 @@ const authSlice = createSlice({
       .addCase(getUsers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.users = action.payload;
+        state.users = action.payload.data.data;
       })
       .addCase(getUsers.rejected, (state, action) => {
         state.isLoading = false;
@@ -537,17 +557,35 @@ const authSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      // Upgrade User
-      .addCase(upgradeUser.pending, (state) => {
+      // Update My profile
+      .addCase(updateMe.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(upgradeUser.fulfilled, (state, action) => {
+      .addCase(updateMe.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.message = action.payload;
+        state.user = action.payload.data.user;
         toast.success(action.payload);
       })
-      .addCase(upgradeUser.rejected, (state, action) => {
+      .addCase(updateMe.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      // Get My profile
+      .addCase(getMe.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getMe.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload.data.data;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(getMe.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

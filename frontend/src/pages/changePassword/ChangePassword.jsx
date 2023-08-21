@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Card from "../../components/card/Card";
 import PageMenu from "../../components/pageMenu/PageMenu";
 import PasswordInput from "../../components/passwordInput/PasswordInput";
@@ -25,7 +25,7 @@ const ChangePassword = () => {
   const navigate = useNavigate();
   const [formData, setformData] = useState(initialState);
   const { currentPassword, password, passwordConfirm } = formData;
-  const { isLoading, isSuccess, message } = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.auth);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,17 +45,13 @@ const ChangePassword = () => {
       passwordConfirm,
     };
 
-    await dispatch(changePassword(userData));
-    //await dispatch(logout());
-  };
-
-  useEffect(() => {
-    dispatch(RESET());
-    if (isSuccess && message.includes("Password changed successfully!")) {
+    const result = await dispatch(changePassword(userData));
+    if (result.payload === "Password changed successfully!") {
+      await dispatch(logout());
+      dispatch(RESET());
       navigate("/login");
-      dispatch(logout());
     }
-  }, [isSuccess, message, navigate, dispatch]);
+  };
 
   return (
     <>
