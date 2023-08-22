@@ -140,6 +140,20 @@ const updateMe = async (userData) => {
   return response.data;
 };
 
+// Get Projects
+const getProjects = async () => {
+  const response = await axiosPrivate.get("projects/");
+  return response.data;
+};
+
+// Update Project Status
+const updateProject = async (projectData) => {
+  const response = await axiosPrivate.patch(`projects/${projectData.id}`, {
+    status: projectData.status,
+  });
+  return response.data;
+};
+
 const authService = {
   register,
   login,
@@ -161,6 +175,8 @@ const authService = {
   verifyOTP,
   validateOTP,
   disableOTP,
+  getProjects,
+  updateProject,
 };
 
 export default authService;

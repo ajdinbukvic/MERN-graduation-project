@@ -7,6 +7,7 @@ const initialState = {
   isLoggedIn: false,
   user: null,
   users: [],
+  projects: [],
   twoFactor: false,
   isError: false,
   isSuccess: false,
@@ -347,6 +348,42 @@ export const updateMe = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       return await authService.updateMe(userData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Get All Projects
+export const getProjects = createAsyncThunk(
+  "projects/getProjects",
+  async (_, thunkAPI) => {
+    try {
+      return await authService.getProjects();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Update Project Status
+export const updateProject = createAsyncThunk(
+  "users/updateProject",
+  async (projectData, thunkAPI) => {
+    try {
+      return await authService.updateProject(projectData);
     } catch (error) {
       const message =
         (error.response &&
@@ -712,6 +749,35 @@ const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         toast.error(action.payload);
+      })
+      // Get Projects
+      .addCase(getProjects.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProjects.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.projects = action.payload.data.data;
+      })
+      .addCase(getProjects.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Update Project Status
+      .addCase(updateProject.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(updateProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });

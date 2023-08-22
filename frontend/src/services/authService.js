@@ -270,3 +270,31 @@ export const updateMe = async (formData) => {
     toast.error(message);
   }
 };
+
+// Get All Projects
+export const getProjects = async () => {
+  try {
+    const response = await axiosPrivate.get(`projects/`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Update Project Status
+export const updateProject = async (id, status) => {
+  try {
+    const response = await axiosPrivate.patch(`projects/${id}`, status);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
