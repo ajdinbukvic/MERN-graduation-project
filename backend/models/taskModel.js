@@ -51,5 +51,18 @@ const taskSchema = mongoose.Schema(
   },
 );
 
+taskSchema.virtual('timeleft').get(function () {
+  if (this.deadline > Date.now()) return this.deadline - Date.now();
+  return 0;
+});
+
+taskSchema.methods.changeTimePassedStatus = async function () {
+  if (this.timeleft <= 0) {
+    await Task.findByIdAndUpdate(this._id, {
+      status: 'nedostaje',
+    });
+  }
+};
+
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;

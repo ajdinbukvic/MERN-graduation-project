@@ -1,8 +1,11 @@
 const express = require('express');
 const projectController = require('./../controllers/projectController');
 const { protect, restrictTo } = require('./../middlewares/authMiddleware');
+const taskRouter = require('./../routes/taskRoutes');
 
 const router = express.Router();
+
+router.use('/:projectId/tasks', taskRouter);
 
 // Protect all routes after this middleware
 router.use(protect);
