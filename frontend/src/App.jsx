@@ -22,6 +22,7 @@ import {
 } from "./redux/features/auth/authSlice";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import LoginWithCode from "./pages/auth/LoginWithCode";
+import CreateProject from "./pages/createProject/CreateProject";
 
 function App() {
   const dispatch = useDispatch();
@@ -91,6 +92,14 @@ function App() {
               element={
                 <Layout>
                   <UserList />
+                </Layout>
+              }
+            />
+            <Route
+              path="/createProject"
+              element={
+                <Layout>
+                  <CreateProject />
                 </Layout>
               }
             />

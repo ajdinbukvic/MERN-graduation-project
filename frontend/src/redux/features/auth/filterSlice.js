@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   filteredUsers: [],
+  filteredProjects: [],
 };
 
 const filterSlice = createSlice({
@@ -18,11 +19,21 @@ const filterSlice = createSlice({
 
       state.filteredUsers = tempUsers;
     },
+    FILTER_PROJECTS(state, action) {
+      const { projects, search } = action.payload;
+      const tempProjects = projects.filter((project) =>
+        project.title.toLowerCase().includes(search.toLowerCase())
+      );
+
+      state.filteredProjects = tempProjects;
+    },
   },
 });
 
 export const { FILTER_USERS } = filterSlice.actions;
+export const { FILTER_PROJECTS } = filterSlice.actions;
 
 export const selectFilteredUsers = (state) => state.filter.filteredUsers;
+export const selectFilteredProjects = (state) => state.filter.filteredProjects;
 
 export default filterSlice.reducer;

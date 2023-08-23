@@ -14,16 +14,10 @@ import "../userList/UserList.scss";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import ReactPaginate from "react-paginate";
-import {
-  // FILTER_USERS,
-  selectFilteredUsers,
-} from "../../redux/features/auth/filterSlice";
 
 const ProjectList = () => {
   useRedirectLoggedOutUser("/login");
-  const filteredUsers = useSelector(selectFilteredUsers);
   const dispatch = useDispatch();
-
   const { projects, isLoading, isError, isSuccess, message, user } =
     useSelector((state) => state.auth);
   const currentUser = user;
@@ -71,7 +65,7 @@ const ProjectList = () => {
     dispatch(RESET());
   }, [isError, isSuccess, message, dispatch, projects]);
 
-  //   Begin Pagination
+  // //   Begin Pagination
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
@@ -80,12 +74,12 @@ const ProjectList = () => {
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
 
-    setCurrentItems(filteredUsers.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(filteredUsers.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, filteredUsers]);
+    setCurrentItems(projects.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(projects.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, projects]);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % filteredUsers.length;
+    const newOffset = (event.selected * itemsPerPage) % projects.length;
     setItemOffset(newOffset);
   };
   //   End Pagination
@@ -101,12 +95,20 @@ const ProjectList = () => {
               <span>
                 <h3>Moji projekti</h3>
               </span>
-              <span></span>
+              {currentUser.role === "profesor" ? (
+                <span>
+                  <button className="--btn --btn-success">
+                    <Link to="/createProject">Kreiraj novi projekat</Link>
+                  </button>
+                </span>
+              ) : (
+                ""
+              )}
             </div>
             {!isLoading && projects.length === 0 ? (
               <p>Trenutno nema projekata.</p>
             ) : (
-              <table>
+              <table className="marginTopTable">
                 <thead>
                   <tr>
                     <th>Status</th>
@@ -114,8 +116,7 @@ const ProjectList = () => {
                     <th>Predmet</th>
                     <th>Tip</th>
                     <th>Pregled</th>
-                    {currentUser.role === "admin" ||
-                    currentUser.role === "profesor" ? (
+                    {currentUser.role === "profesor" ? (
                       <th>Promijeni status</th>
                     ) : (
                       ""
@@ -131,20 +132,19 @@ const ProjectList = () => {
                     return (
                       <tr key={_id}>
                         {isActive ? (
-                          <td className="--btn --btn-success">Aktivan</td>
+                          <td className="--btn-status--active">Aktivan</td>
                         ) : (
-                          <td className="--btn --btn-danger">Neaktivan</td>
+                          <td className="--btn-status">Neaktivan</td>
                         )}
                         <td>{title}</td>
                         <td>{subject}</td>
                         <td>{projectType}</td>
                         <td>
                           <button className="--btn --btn-primary">
-                            <Link to="/login">Otvori</Link>
+                            <Link to={`/project/${_id}`}>Otvori</Link>
                           </button>
                         </td>
-                        {currentUser.role === "admin" ||
-                        currentUser.role === "profesor" ? (
+                        {currentUser.role === "profesor" ? (
                           <td className="icons --center-all">
                             <span>
                               {isActive ? (
@@ -152,7 +152,7 @@ const ProjectList = () => {
                                   size={20}
                                   color={"red"}
                                   onClick={() =>
-                                    confirmUpdateProject(_id, true)
+                                    confirmUpdateProject(_id, false)
                                   }
                                 />
                               ) : (
@@ -160,7 +160,7 @@ const ProjectList = () => {
                                   size={20}
                                   color={"green"}
                                   onClick={() =>
-                                    confirmUpdateProject(_id, false)
+                                    confirmUpdateProject(_id, true)
                                   }
                                 />
                               )}

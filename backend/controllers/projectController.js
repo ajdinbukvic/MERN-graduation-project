@@ -11,13 +11,13 @@ exports.getAllProjects = asyncHandler(async (req, res, next) => {
   if (user.role === 'student') {
     projects = await Project.find({
       $or: [{ teamLeaderId: req.user.id }, { members: { $in: [req.user.id] } }],
-    }).sort({ isActive: 1 });
+    }).sort({ isActive: -1 });
   } else if (user.role === 'profesor') {
     projects = await Project.find({ profesorId: req.user.id }).sort({
-      isActive: 1,
+      isActive: -1,
     });
   } else {
-    projects = await Project.find().sort({ isActive: 1 });
+    projects = await Project.find().sort({ isActive: -1 });
   }
 
   res.status(200).json({

@@ -23,7 +23,9 @@ const Home = () => {
           </div>
         </section>
       </ShowOnLogout>
-      <ShowOnLogin>{/* <ProjectList /> */}</ShowOnLogin>
+      <ShowOnLogin>
+        <ProjectList />
+      </ShowOnLogin>
     </>
   );
 };

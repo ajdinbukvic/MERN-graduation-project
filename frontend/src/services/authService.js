@@ -298,3 +298,17 @@ export const updateProject = async (id, status) => {
     toast.error(message);
   }
 };
+
+// Create Project
+export const createProject = async (projectData) => {
+  try {
+    const response = await axiosPrivate.paposttch(`projects/`, projectData);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};

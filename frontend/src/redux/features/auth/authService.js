@@ -154,6 +154,12 @@ const updateProject = async (projectData) => {
   return response.data;
 };
 
+// Create Project
+const createProject = async (projectData) => {
+  const response = await axiosPrivate.post(`projects/`, projectData);
+  return response.data;
+};
+
 const authService = {
   register,
   login,
@@ -177,6 +183,7 @@ const authService = {
   disableOTP,
   getProjects,
   updateProject,
+  createProject,
 };
 
 export default authService;
