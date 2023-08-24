@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-//const User = require('./../models/userModel');
+const User = require('./../models/userModel');
+const Project = require('./../models/projectModel');
 
 const taskSchema = mongoose.Schema(
   {
@@ -63,6 +64,23 @@ taskSchema.methods.changeTimePassedStatus = async function () {
     });
   }
 };
+
+taskSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'assignedId',
+    User,
+  })
+    .populate({
+      path: 'createdId',
+      User,
+    })
+    .populate({
+      path: 'projectId',
+      Project,
+    });
+
+  next();
+});
 
 const Task = mongoose.model('Task', taskSchema);
 module.exports = Task;

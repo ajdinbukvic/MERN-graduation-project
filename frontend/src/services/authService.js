@@ -285,6 +285,20 @@ export const getProjects = async () => {
   }
 };
 
+// Get Project
+export const getProject = async (projectId) => {
+  try {
+    const response = await axiosPrivate.get(`projects/${projectId}`);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
 // Update Project Status
 export const updateProject = async (id, status) => {
   try {
@@ -302,7 +316,57 @@ export const updateProject = async (id, status) => {
 // Create Project
 export const createProject = async (projectData) => {
   try {
-    const response = await axiosPrivate.paposttch(`projects/`, projectData);
+    const response = await axiosPrivate.post(`projects/`, projectData);
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Get All Tasks
+export const getTasks = async (projectId, status) => {
+  try {
+    const response = await axiosPrivate.get(
+      `projects/${projectId}/tasks?filter=${status}`
+    );
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Update Task
+export const updateTask = async (projectId, id, taskData) => {
+  try {
+    const response = await axiosPrivate.patch(
+      `projects/${projectId}/tasks/${id}`,
+      taskData
+    );
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
+// Create Task
+export const createTask = async (projectId, taskData) => {
+  try {
+    const response = await axiosPrivate.post(
+      `projects/${projectId}/tasks/`,
+      taskData
+    );
     return response.data;
   } catch (error) {
     const message =

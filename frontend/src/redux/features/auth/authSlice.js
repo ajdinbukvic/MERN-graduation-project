@@ -8,6 +8,8 @@ const initialState = {
   user: null,
   users: [],
   projects: [],
+  project: [],
+  tasks: [],
   twoFactor: false,
   isError: false,
   isSuccess: false,
@@ -378,6 +380,24 @@ export const getProjects = createAsyncThunk(
   }
 );
 
+// Get Project
+export const getProject = createAsyncThunk(
+  "projects/getProject",
+  async (projectId, thunkAPI) => {
+    try {
+      return await authService.getProject(projectId);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Update Project Status
 export const updateProject = createAsyncThunk(
   "projects/updateProject",
@@ -402,6 +422,60 @@ export const createProject = createAsyncThunk(
   async (projectData, thunkAPI) => {
     try {
       return await authService.createProject(projectData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Get All Tasks
+export const getTasks = createAsyncThunk(
+  "tasks/getTasks",
+  async (taskData, thunkAPI) => {
+    try {
+      return await authService.getTasks(taskData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Update Task
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask",
+  async (taskData, thunkAPI) => {
+    try {
+      return await authService.updateProject(taskData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Create Task
+export const createTask = createAsyncThunk(
+  "tasks/createTask",
+  async (taskData, thunkAPI) => {
+    try {
+      return await authService.createProject(taskData);
     } catch (error) {
       const message =
         (error.response &&
@@ -782,6 +856,20 @@ const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
+      // Get Project
+      .addCase(getProject.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProject.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.project = action.payload.data.data;
+      })
+      .addCase(getProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
       // Update Project Status
       .addCase(updateProject.pending, (state) => {
         state.isLoading = true;
@@ -809,6 +897,51 @@ const authSlice = createSlice({
         toast.success(action.payload);
       })
       .addCase(createProject.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      }) // Get Tasks
+      .addCase(getTasks.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getTasks.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.tasks = action.payload.data.data;
+      })
+      .addCase(getTasks.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Update Task
+      .addCase(updateTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      // Create Task
+      .addCase(createTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+        toast.success(action.payload);
+      })
+      .addCase(createTask.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

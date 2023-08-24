@@ -146,6 +146,12 @@ const getProjects = async () => {
   return response.data;
 };
 
+// Get Project
+const getProject = async (projectId) => {
+  const response = await axiosPrivate.get(`projects/${projectId}`);
+  return response.data;
+};
+
 // Update Project Status
 const updateProject = async (projectData) => {
   const response = await axiosPrivate.patch(`projects/${projectData.id}`, {
@@ -157,6 +163,32 @@ const updateProject = async (projectData) => {
 // Create Project
 const createProject = async (projectData) => {
   const response = await axiosPrivate.post(`projects/`, projectData);
+  return response.data;
+};
+
+// Get Tasks
+const getTasks = async (taskData) => {
+  const response = await axiosPrivate.get(
+    `projects/${taskData.projectId}/tasks?filter=${taskData.filter}`
+  );
+  return response.data;
+};
+
+// Update Task
+const updateTask = async (taskData) => {
+  const response = await axiosPrivate.patch(
+    `projects/${taskData.projectId}/tasks/${taskData.id}`,
+    taskData.data
+  );
+  return response.data;
+};
+
+// Create Task
+const createTask = async (taskData) => {
+  const response = await axiosPrivate.post(
+    `projects/${taskData.projectId}/tasks/`,
+    taskData.data
+  );
   return response.data;
 };
 
@@ -182,8 +214,12 @@ const authService = {
   validateOTP,
   disableOTP,
   getProjects,
+  getProject,
   updateProject,
   createProject,
+  getTasks,
+  updateTask,
+  createTask,
 };
 
 export default authService;

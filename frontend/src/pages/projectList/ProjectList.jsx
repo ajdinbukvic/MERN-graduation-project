@@ -141,7 +141,7 @@ const ProjectList = () => {
                         <td>{projectType}</td>
                         <td>
                           <button className="--btn --btn-primary">
-                            <Link to={`/project/${_id}`}>Otvori</Link>
+                            <Link to={`/project/${_id}/active`}>Otvori</Link>
                           </button>
                         </td>
                         {currentUser.role === "profesor" ? (

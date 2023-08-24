@@ -5,6 +5,7 @@ const factory = require('./factory');
 const asyncHandler = require('express-async-handler');
 const CustomError = require('./../utils/customError');
 const { validationResult } = require('express-validator');
+const ObjectID = require('mongodb').ObjectId;
 
 exports.setProjectUserIds = (req, res, next) => {
   // Allow nested routes
@@ -26,11 +27,11 @@ exports.getAllTasks = asyncHandler(async (req, res, next) => {
     if (!project) {
       return next(new CustomError('No project found with that ID', 404));
     }
+    const isMember = project.members.some((member) =>
+      member._id.equals(user._id),
+    );
     if (user.role === 'student') {
-      if (
-        user._id !== project.teamLeaderId ||
-        !project.members.includes(user._id)
-      ) {
+      if (!project.teamLeaderId._id.equals(user._id) && !isMember) {
         return next(
           new CustomError('You are not allowed to tasks of this project', 401),
         );
@@ -40,17 +41,17 @@ exports.getAllTasks = asyncHandler(async (req, res, next) => {
           projectId: req.params.projectId,
           status: filter,
         }).sort({
-          assignedId: user._id,
+          assignedId: -1,
           createdAt: -1,
         });
       } else {
         tasks = await Task.find({ projectId: req.params.projectId }).sort({
-          assignedId: req.user.id,
+          assignedId: -1,
           createdAt: -1,
         });
       }
     } else if (user.role === 'profesor') {
-      if (user._id !== project.profesorId) {
+      if (!project.profesorId._id.equals(user._id)) {
         return next(
           new CustomError('You are not allowed to tasks of this project', 401),
         );
@@ -104,19 +105,21 @@ exports.getTask = asyncHandler(async (req, res, next) => {
   if (!task) {
     return next(new CustomError('No task found with that ID', 404));
   }
-
+  //const project = await Project.findById(task.projectId._id);
   const project = await Project.findById(task.projectId);
-
+  const isMember = project.members.some((member) =>
+    member._id.equals(req.user.id),
+  );
   if (
-    (user.role === 'student' && project.teamLeaderId === req.user.id) ||
-    project.members.includes(req.user.id)
+    (user.role === 'student' && project.teamLeaderId._id.equals(req.user.id)) ||
+    isMember
   ) {
     return next(
       new CustomError('You are not member of project with that task ID', 401),
     );
   }
 
-  if (user.role === 'profesor' && project.profesorId !== req.user.id) {
+  if (user.role === 'profesor' && project.profesorId._id.equals(req.user.id)) {
     return next(
       new CustomError('You are not author of project with that task ID', 401),
     );
@@ -139,8 +142,19 @@ exports.createTask = asyncHandler(async (req, res, next) => {
 
   const project = await Project.findById(req.params.projectId);
 
-  if (project.teamLeaderId !== req.user.id) {
+  if (!project.teamLeaderId._id.equals(req.user.id)) {
     return next(new CustomError('Only team leader can create new task', 401));
+  }
+
+  if (!req.body.assignedId) {
+    return next(new CustomError('You must specify member to this task', 401));
+  }
+  const isMember = project.members.some((member) =>
+    member._id.equals(req.body.assignedId),
+  );
+
+  if (!project.teamLeaderId._id.equals(req.body.assignedId) && !isMember) {
+    return next(new CustomError('You must assign task to project member', 401));
   }
 
   const newTask = await Task.create({
@@ -189,7 +203,7 @@ exports.updateTask = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (task.assignedId !== req.user.id) {
+  if (!task.assignedId._id.equals(req.user.id)) {
     return next(new CustomError('This task is not assigned to you', 401));
   }
 

@@ -14,6 +14,9 @@ import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
 import UserList from "./pages/userList/UserList";
 import TwoFactor from "./pages/twoFactorAuth/TwoFactor";
+import ActiveTasks from "./pages/tasks/ActiveTasks";
+import CompletedTasks from "./pages/tasks/CompletedTasks";
+import MissingTasks from "./pages/tasks/MissingTasks";
 import {
   getLoginStatus,
   getUser,
@@ -100,6 +103,30 @@ function App() {
               element={
                 <Layout>
                   <CreateProject />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/active"
+              element={
+                <Layout>
+                  <ActiveTasks />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/completed"
+              element={
+                <Layout>
+                  <CompletedTasks />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/missing"
+              element={
+                <Layout>
+                  <MissingTasks />
                 </Layout>
               }
             />
