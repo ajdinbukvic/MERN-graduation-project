@@ -18,7 +18,7 @@ exports.getAllTasks = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   let project;
   const filter = req.query.filter;
-  const filterWords = ['dodijeljen', 'završen', 'nedostaje'];
+  const filterWords = ['dodijeljen', 'predat', 'nedostaje'];
   const isFiltered = filterWords.includes(filter);
   let tasks;
 
@@ -105,13 +105,14 @@ exports.getTask = asyncHandler(async (req, res, next) => {
   if (!task) {
     return next(new CustomError('No task found with that ID', 404));
   }
-  //const project = await Project.findById(task.projectId._id);
-  const project = await Project.findById(task.projectId);
+
+  const project = await Project.findById(task.projectId._id);
   const isMember = project.members.some((member) =>
     member._id.equals(req.user.id),
   );
   if (
-    (user.role === 'student' && project.teamLeaderId._id.equals(req.user.id)) ||
+    user.role === 'student' &&
+    project.teamLeaderId._id.equals(req.user.id) &&
     isMember
   ) {
     return next(
@@ -119,7 +120,7 @@ exports.getTask = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (user.role === 'profesor' && project.profesorId._id.equals(req.user.id)) {
+  if (user.role === 'profesor' && !project.profesorId._id.equals(req.user.id)) {
     return next(
       new CustomError('You are not author of project with that task ID', 401),
     );
@@ -155,6 +156,10 @@ exports.createTask = asyncHandler(async (req, res, next) => {
 
   if (!project.teamLeaderId._id.equals(req.body.assignedId) && !isMember) {
     return next(new CustomError('You must assign task to project member', 401));
+  }
+
+  if (new Date(req.body.deadline) < Date.now()) {
+    return next(new CustomError('Deadline must be in the future', 401));
   }
 
   const newTask = await Task.create({
@@ -220,7 +225,7 @@ exports.updateTask = asyncHandler(async (req, res, next) => {
   const updatedTask = await Task.findByIdAndUpdate(
     req.params.id,
     {
-      status: 'završen',
+      status: 'predat',
       description: req.body.description,
       attachments: req.body.attachments,
       endDate: Date.now(),

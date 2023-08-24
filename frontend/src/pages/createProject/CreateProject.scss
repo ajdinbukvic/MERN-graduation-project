@@ -4,17 +4,48 @@
   display: flex;
   justify-content: center;
 }
+.add--item {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+  display: flex;
+  justify-content: center;
+}
 .add-item .card {
   width: 100%;
   max-width: 800px;
   padding: 1rem;
 }
+
+.add--item .card {
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem;
+}
+
 .add-item form label {
   display: block;
   font-size: 1.4rem;
   font-weight: 500;
-  color: var(--color-dark);
+  color: var(--color-danger);
 }
+
+.add--item form label {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--color-danger);
+}
+
+.add--item form a {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin: 0.1rem auto;
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
 .add-item form input[type="text"],
 .add-item form input[type="number"],
 .add-item form input[type="date"],
@@ -31,6 +62,25 @@
   border-radius: 3px;
   outline: none;
 }
+
+.add--item form input[type="text"],
+.add--item form textarea,
+.add--item form input[type="number"],
+.add--item form input[type="date"],
+.add--item form input[type="email"],
+.add--item form select,
+.add--item form input[type="password"] {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 300;
+  padding: 1rem;
+  margin: 1rem auto;
+  width: 100%;
+  border: 1px solid #777;
+  border-radius: 3px;
+  outline: none;
+}
+
 .group {
   border: 1px solid var(--dark-blue);
   padding: 5px;

@@ -35,7 +35,7 @@ const taskSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['dodijeljen', 'završen', 'nedostaje'],
+      enum: ['dodijeljen', 'predat', 'nedostaje'],
       default: 'dodijeljen',
     },
     endDate: {

@@ -65,7 +65,7 @@ const MissingTasks = () => {
             {!isLoading && tasks.length === 0 ? (
               <p>Trenutno nema neurađenih zadataka.</p>
             ) : (
-              <table>
+              <table className="marginTopTable">
                 <thead>
                   <tr>
                     <th>R. br.</th>

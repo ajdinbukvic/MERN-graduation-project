@@ -174,6 +174,14 @@ const getTasks = async (taskData) => {
   return response.data;
 };
 
+// Get Task
+const getTask = async (taskData) => {
+  const response = await axiosPrivate.get(
+    `projects/${taskData.projectId}/tasks/${taskData.id}`
+  );
+  return response.data;
+};
+
 // Update Task
 const updateTask = async (taskData) => {
   const response = await axiosPrivate.patch(
@@ -218,6 +226,7 @@ const authService = {
   updateProject,
   createProject,
   getTasks,
+  getTask,
   updateTask,
   createTask,
 };

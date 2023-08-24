@@ -36,15 +36,18 @@ exports.getProject = asyncHandler(async (req, res, next) => {
   if (!project) {
     return next(new CustomError('No project found with that ID', 404));
   }
-
+  const isMember = project.members.some((member) =>
+    member._id.equals(req.user.id),
+  );
   if (
-    (user.role === 'student' && project.teamLeaderId === req.user.id) ||
-    project.members.includes(req.user.id)
+    user.role === 'student' &&
+    project.teamLeaderId._id.equals(req.user.id) &&
+    isMember
   ) {
     return next(new CustomError('You are not member of this project', 401));
   }
 
-  if (user.role === 'profesor' && project.profesorId !== req.user.id) {
+  if (user.role === 'profesor' && !project.profesorId._id.equals(req.user.id)) {
     return next(new CustomError('You are not author of this project', 401));
   }
 

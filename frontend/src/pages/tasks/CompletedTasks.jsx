@@ -20,7 +20,7 @@ const CompletedTasks = () => {
   );
 
   useEffect(() => {
-    dispatch(getTasks({ projectId, filter: "završen" }));
+    dispatch(getTasks({ projectId, filter: "predat" }));
   }, [dispatch, projectId]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const CompletedTasks = () => {
             {!isLoading && tasks.length === 0 ? (
               <p>Trenutno nema urađenih zadataka.</p>
             ) : (
-              <table>
+              <table className="marginTopTable">
                 <thead>
                   <tr>
                     <th>R. br.</th>
@@ -80,8 +80,7 @@ const CompletedTasks = () => {
 
                 <tbody>
                   {currentItems.map((task, index) => {
-                    const { _id, title, endDate, assignedId, createdAt } = task;
-
+                    const { _id, title, assignedId, endDate, createdAt } = task;
                     return (
                       <tr key={_id}>
                         <td>{index + 1}</td>
@@ -95,7 +94,13 @@ const CompletedTasks = () => {
                             .join(".")}
                         </td>
                         <td>
-                          {endDate.split("T")[0].split("-").reverse().join(".")}
+                          {endDate
+                            ? endDate
+                                .split("T")[0]
+                                .split("-")
+                                .reverse()
+                                .join(".")
+                            : ""}
                         </td>
                         <td>
                           <button className="--btn --btn-primary">

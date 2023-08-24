@@ -343,6 +343,22 @@ export const getTasks = async (projectId, status) => {
   }
 };
 
+// Get Task
+export const getTask = async (projectId, id) => {
+  try {
+    const response = await axiosPrivate.get(
+      `projects/${projectId}/tasks/${id}`
+    );
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};
+
 // Update Task
 export const updateTask = async (projectId, id, taskData) => {
   try {

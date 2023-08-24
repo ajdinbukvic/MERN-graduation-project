@@ -81,7 +81,7 @@ const ActiveTasks = () => {
             {!isLoading && tasks.length === 0 ? (
               <p>Trenutno nema aktivnih zadataka.</p>
             ) : (
-              <table>
+              <table className="marginTopTable">
                 <thead>
                   <tr>
                     <th>R. br.</th>
@@ -118,7 +118,7 @@ const ActiveTasks = () => {
                             .join(".")}
                         </td>
                         <td>
-                          {assignedId._id === user._id ? (
+                          {assignedId._id === user._id && project.isActive ? (
                             <button className="--btn --btn-success">
                               <Link
                                 to={`/project/${projectId}/updateTask/${_id}`}

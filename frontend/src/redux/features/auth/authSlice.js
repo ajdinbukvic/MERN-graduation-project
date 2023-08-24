@@ -10,6 +10,7 @@ const initialState = {
   projects: [],
   project: [],
   tasks: [],
+  task: [],
   twoFactor: false,
   isError: false,
   isSuccess: false,
@@ -452,12 +453,30 @@ export const getTasks = createAsyncThunk(
   }
 );
 
+// Get Task
+export const getTask = createAsyncThunk(
+  "tasks/getTask",
+  async (taskData, thunkAPI) => {
+    try {
+      return await authService.getTask(taskData);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Update Task
 export const updateTask = createAsyncThunk(
   "tasks/updateTask",
   async (taskData, thunkAPI) => {
     try {
-      return await authService.updateProject(taskData);
+      return await authService.updateTask(taskData);
     } catch (error) {
       const message =
         (error.response &&
@@ -475,7 +494,7 @@ export const createTask = createAsyncThunk(
   "tasks/createTask",
   async (taskData, thunkAPI) => {
     try {
-      return await authService.createProject(taskData);
+      return await authService.createTask(taskData);
     } catch (error) {
       const message =
         (error.response &&
@@ -914,6 +933,19 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      }) // Get Task
+      .addCase(getTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.task = action.payload.data.data;
+      })
+      .addCase(getTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       })
       // Update Task
       .addCase(updateTask.pending, (state) => {
@@ -922,7 +954,7 @@ const authSlice = createSlice({
       .addCase(updateTask.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload;
+        state.message = action.payload.status;
         toast.success(action.payload);
       })
       .addCase(updateTask.rejected, (state, action) => {
@@ -938,7 +970,7 @@ const authSlice = createSlice({
       .addCase(createTask.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.message = action.payload;
+        state.message = action.payload.status;
         toast.success(action.payload);
       })
       .addCase(createTask.rejected, (state, action) => {

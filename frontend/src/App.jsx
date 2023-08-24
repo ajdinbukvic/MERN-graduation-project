@@ -17,6 +17,9 @@ import TwoFactor from "./pages/twoFactorAuth/TwoFactor";
 import ActiveTasks from "./pages/tasks/ActiveTasks";
 import CompletedTasks from "./pages/tasks/CompletedTasks";
 import MissingTasks from "./pages/tasks/MissingTasks";
+import CreateTask from "./pages/taskActions/CreateTask";
+import GetTask from "./pages/taskActions/GetTask";
+import UpdateTask from "./pages/taskActions/UpdateTask";
 import {
   getLoginStatus,
   getUser,
@@ -127,6 +130,30 @@ function App() {
               element={
                 <Layout>
                   <MissingTasks />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/createTask"
+              element={
+                <Layout>
+                  <CreateTask />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/task/:id"
+              element={
+                <Layout>
+                  <GetTask />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/updateTask/:id"
+              element={
+                <Layout>
+                  <UpdateTask />
                 </Layout>
               }
             />
