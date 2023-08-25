@@ -43,6 +43,11 @@ exports.googleLogin = asyncHandler(async (req, res, next) => {
       await user.save({ validateBeforeSave: false });
     }
 
+    if (user.otpEnabled && user.otpVerified)
+      return next(
+        new CustomError(`Cannot login without login code;${email}`, 400),
+      );
+
     createSendToken(user, 200, res);
   } else {
     const newUser = await User.create({

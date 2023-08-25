@@ -9,6 +9,8 @@ router.use(protect);
 
 router.use(taskController.checkStatus);
 
+router.get('/task-stats', taskController.getProjectTaskStats);
+
 router
   .route('/')
   .get(taskController.getAllTasks)

@@ -200,6 +200,14 @@ const createTask = async (taskData) => {
   return response.data;
 };
 
+// Get Member Stats
+const getMemberStats = async (projectId) => {
+  const response = await axiosPrivate.get(
+    `projects/${projectId}/tasks/task-stats`
+  );
+  return response.data;
+};
+
 const authService = {
   register,
   login,
@@ -229,6 +237,7 @@ const authService = {
   getTask,
   updateTask,
   createTask,
+  getMemberStats,
 };
 
 export default authService;

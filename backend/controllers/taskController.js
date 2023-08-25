@@ -6,6 +6,7 @@ const asyncHandler = require('express-async-handler');
 const CustomError = require('./../utils/customError');
 const { validationResult } = require('express-validator');
 const ObjectID = require('mongodb').ObjectId;
+const mongoose = require('mongoose');
 
 exports.setProjectUserIds = (req, res, next) => {
   // Allow nested routes
@@ -240,6 +241,68 @@ exports.updateTask = asyncHandler(async (req, res, next) => {
     status: 'success',
     data: {
       data: updatedTask,
+    },
+  });
+});
+
+exports.getProjectTaskStats = asyncHandler(async (req, res, next) => {
+  const id = new mongoose.Types.ObjectId(req.params.projectId);
+  const project = await Project.findById(req.params.projectId);
+  const user = await User.findById(req.user.id);
+
+  if (!project) {
+    return next(new CustomError('No project found with that ID', 404));
+  }
+
+  const isMember = project.members.some((member) =>
+    member._id.equals(req.user.id),
+  );
+  if (
+    user.role === 'student' &&
+    project.teamLeaderId._id.equals(req.user.id) &&
+    isMember
+  ) {
+    return next(
+      new CustomError('You are not member of project with that ID', 401),
+    );
+  }
+
+  if (user.role === 'profesor' && !project.profesorId._id.equals(req.user.id)) {
+    return next(
+      new CustomError('You are not author of project with that ID', 401),
+    );
+  }
+
+  const stats = await Task.aggregate([
+    {
+      $match: { projectId: id },
+    },
+    {
+      $group: {
+        _id: '$assignedId',
+        dodijeljen: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'dodijeljen'] }, 1, 0],
+          },
+        },
+        predat: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'predat'] }, 1, 0],
+          },
+        },
+        nedostaje: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'nedostaje'] }, 1, 0],
+          },
+        },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      stats,
     },
   });
 });

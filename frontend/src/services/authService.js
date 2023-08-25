@@ -392,3 +392,19 @@ export const createTask = async (projectId, taskData) => {
     toast.error(message);
   }
 };
+
+// Get Member Stats
+export const getMemberStats = async (projectId) => {
+  try {
+    const response = await axiosPrivate.get(
+      `projects/${projectId}/tasks/task-stats`
+    );
+    return response.data;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) ||
+      error.message ||
+      error.toString();
+    toast.error(message);
+  }
+};

@@ -15,6 +15,9 @@ const PageMenu = (id) => {
           <li>
             <NavLink to={`/project/${id.id}/missing`}>Nedostaju</NavLink>
           </li>
+          <li>
+            <NavLink to={`/project/${id.id}/stats`}>Statistika članova</NavLink>
+          </li>
         </ul>
       </nav>
     </div>

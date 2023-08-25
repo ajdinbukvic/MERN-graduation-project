@@ -17,6 +17,7 @@ import TwoFactor from "./pages/twoFactorAuth/TwoFactor";
 import ActiveTasks from "./pages/tasks/ActiveTasks";
 import CompletedTasks from "./pages/tasks/CompletedTasks";
 import MissingTasks from "./pages/tasks/MissingTasks";
+import MemberStats from "./pages/tasks/MemberStats";
 import CreateTask from "./pages/taskActions/CreateTask";
 import GetTask from "./pages/taskActions/GetTask";
 import UpdateTask from "./pages/taskActions/UpdateTask";
@@ -130,6 +131,14 @@ function App() {
               element={
                 <Layout>
                   <MissingTasks />
+                </Layout>
+              }
+            />
+            <Route
+              path="/project/:projectId/stats"
+              element={
+                <Layout>
+                  <MemberStats />
                 </Layout>
               }
             />

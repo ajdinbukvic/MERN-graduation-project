@@ -11,6 +11,7 @@ const initialState = {
   project: [],
   tasks: [],
   task: [],
+  stats: [],
   twoFactor: false,
   isError: false,
   isSuccess: false,
@@ -507,6 +508,24 @@ export const createTask = createAsyncThunk(
   }
 );
 
+// Get Member Stats
+export const getMemberStats = createAsyncThunk(
+  "tasks/getMemberStats",
+  async (projectId, thunkAPI) => {
+    try {
+      return await authService.getMemberStats(projectId);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -773,9 +792,12 @@ const authSlice = createSlice({
       .addCase(loginWithGoogle.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload;
+        state.message = action.payload.split(";")[1];
         state.user = null;
-        toast.error(action.payload);
+        toast.error(action.payload.split(";")[0]);
+        if (action.payload.includes("@")) {
+          state.twoFactor = true;
+        }
       })
       //Login With Code
       .addCase(loginWithCode.pending, (state) => {
@@ -978,6 +1000,20 @@ const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         toast.error(action.payload);
+      })
+      // Get Member Stats
+      .addCase(getMemberStats.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getMemberStats.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.stats = action.payload.data.stats;
+      })
+      .addCase(getMemberStats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });

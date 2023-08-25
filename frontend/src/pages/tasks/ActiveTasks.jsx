@@ -66,7 +66,7 @@ const ActiveTasks = () => {
               <span>
                 <h3>Trenutno aktivni zadaci</h3>
               </span>
-              {project.teamLeaderId._id === user._id ? (
+              {project.teamLeaderId._id === user._id && project.isActive ? (
                 <span>
                   <button className="--btn --btn-success">
                     <Link to={`/project/${projectId}/createTask`}>

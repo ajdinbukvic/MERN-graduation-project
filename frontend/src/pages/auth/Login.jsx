@@ -29,9 +29,8 @@ const Login = () => {
   const [formData, setformData] = useState(initialState);
   const { email, password } = formData;
 
-  const { isLoggedIn, isLoading, isSuccess, isError, twoFactor } = useSelector(
-    (state) => state.auth
-  );
+  const { isLoggedIn, isLoading, isSuccess, isError, twoFactor, message } =
+    useSelector((state) => state.auth);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,8 +64,21 @@ const Login = () => {
       navigate(`/loginWithCode/${email}`);
     }
 
+    if (isError && twoFactor && message.includes("@")) {
+      navigate(`/loginWithCode/${message}`);
+    }
+
     dispatch(RESET());
-  }, [isSuccess, isLoggedIn, isError, twoFactor, email, navigate, dispatch]);
+  }, [
+    isSuccess,
+    isLoggedIn,
+    isError,
+    twoFactor,
+    email,
+    navigate,
+    dispatch,
+    message,
+  ]);
 
   const googleLogin = async (credentialResponse) => {
     await dispatch(
