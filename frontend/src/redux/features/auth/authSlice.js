@@ -858,6 +858,7 @@ const authSlice = createSlice({
         state.isLoggedIn = true;
         state.twoFactor = false;
         state.user = action.payload.data.user;
+        localStorage.setItem("token", action.payload.accessToken);
         toast.success("Uspješno ste se prijavili");
       })
       .addCase(validateOTP.rejected, (state, action) => {
