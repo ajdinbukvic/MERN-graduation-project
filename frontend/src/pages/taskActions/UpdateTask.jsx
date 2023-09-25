@@ -91,7 +91,7 @@ const UpdateTask = () => {
                   name="createdAt"
                   required
                   disabled
-                  value={task?.createdAt.split("T")[0]}
+                  value={task?.createdAt?.split("T")[0]}
                 />
                 <label>Rok za predaju:</label>
                 <input
@@ -100,7 +100,7 @@ const UpdateTask = () => {
                   name="deadline"
                   required
                   disabled
-                  value={task?.deadline.split("T")[0]}
+                  value={task?.deadline?.split("T")[0]}
                 />
                 <label>Student:</label>
                 <input

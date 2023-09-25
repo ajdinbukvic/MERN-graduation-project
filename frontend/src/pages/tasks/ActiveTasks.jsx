@@ -66,7 +66,7 @@ const ActiveTasks = () => {
               <span>
                 <h3>Trenutno aktivni zadaci</h3>
               </span>
-              {project.teamLeaderId._id === user._id && project.isActive ? (
+              {project?.teamLeaderId?._id === user._id && project?.isActive ? (
                 <span>
                   <button className="--btn --btn-success">
                     <Link to={`/project/${projectId}/createTask`}>
@@ -118,7 +118,7 @@ const ActiveTasks = () => {
                             .join(".")}
                         </td>
                         <td>
-                          {assignedId._id === user._id && project.isActive ? (
+                          {assignedId?._id === user._id && project?.isActive ? (
                             <button className="--btn --btn-success">
                               <Link
                                 to={`/project/${projectId}/updateTask/${_id}`}

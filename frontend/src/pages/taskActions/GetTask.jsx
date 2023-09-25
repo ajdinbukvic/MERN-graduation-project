@@ -47,7 +47,7 @@ const GetTask = () => {
                   name="createdAt"
                   required
                   disabled
-                  value={task?.createdAt.split("T")[0]}
+                  value={task?.createdAt?.split("T")[0]}
                 />
                 <label>Rok za predaju:</label>
                 <input
@@ -56,7 +56,7 @@ const GetTask = () => {
                   name="deadline"
                   required
                   disabled
-                  value={task?.deadline.split("T")[0]}
+                  value={task?.deadline?.split("T")[0]}
                 />
                 <label>Datum završetka:</label>
                 <input
@@ -65,7 +65,7 @@ const GetTask = () => {
                   name="endDate"
                   required
                   disabled
-                  value={task?.endDate ? task?.endDate.split("T")[0] : ""}
+                  value={task?.endDate ? task?.endDate?.split("T")[0] : ""}
                 />
                 <label>Student:</label>
                 <input

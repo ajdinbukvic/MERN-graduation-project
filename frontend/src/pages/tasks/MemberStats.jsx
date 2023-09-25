@@ -69,14 +69,14 @@ const MemberStats = () => {
               </thead>
 
               <tbody>
-                <tr key={project.teamLeaderId._id}>
-                  <td>{project.teamLeaderId.name}</td>
-                  <td>{project.teamLeaderId.email}</td>
+                <tr key={project?.teamLeaderId?._id}>
+                  <td>{project?.teamLeaderId?.name}</td>
+                  <td>{project?.teamLeaderId?.email}</td>
                   <td>Vođa tima</td>
                   {currentItems.length ? (
                     currentItems.map((item) => {
                       const { _id, dodijeljen, predat, nedostaje } = item;
-                      if (_id === project.teamLeaderId._id)
+                      if (_id === project?.teamLeaderId?._id)
                         return (
                           <>
                             <td>{dodijeljen}</td>
@@ -94,7 +94,7 @@ const MemberStats = () => {
                   )}
                 </tr>
 
-                {project.members.map((item) => {
+                {project?.members?.map((item) => {
                   const { _id, name, email } = item;
                   return (
                     <tr key={_id}>
