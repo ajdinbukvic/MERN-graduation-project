@@ -41,7 +41,7 @@
     "nodemailer": "^6.9.3",
     "nodemailer-express-handlebars": "^6.1.0",
     "otpauth": "^9.1.3",
-    "pug": "^3.0.2",
+    "pug": "^3.0.3",
     "puh": "^1.0.0",
     "sharp": "^0.32.6",
     "slugify": "^1.6.6",
